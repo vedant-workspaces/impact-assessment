@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Postgres\V1\PrimarySectorsRepositoryImpl;
+use App\Repositories\V1\PrimarySectorsRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            PrimarySectorsRepository::class,
+            PrimarySectorsRepositoryImpl::class
+        );
     }
 
     /**
