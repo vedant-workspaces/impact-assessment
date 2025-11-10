@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\V1\PrimarySectorController;
-use App\Http\Controllers\Api\V1\RegisterNgoController;
 use App\Http\Controllers\Api\V1\SdgsController;
 use Illuminate\Support\Facades\Route;
 
