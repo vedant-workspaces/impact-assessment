@@ -18,28 +18,16 @@ class RegisterUserDao
 
     public function toArray()
     {
-        $collection = [];
-        if (isset($this->email)) {
-            $collection['email'] = $this->email;
-        }
-        if (isset($this->userName)) {
-            $collection['username'] = $this->userName;
-        }
-        if (isset($this->password)) {
-            $collection['password'] = $this->password;
-        }
-        if (isset($this->userType)) {
-            $collection['user_type'] = $this->userType;
-        }
-        if (isset($this->createdAt)) {
-            $collection['created_at'] = $this->createdAt;
-        }
-        if (isset($this->updatedAt)) {
-            $collection['updated_at'] = $this->updatedAt;
-        }
-
-        return $collection;
+        return [
+            'organisation_email' => $this->email,
+            'user_name'          => $this->userName,
+            'password'           => $this->password,
+            'user_type'          => $this->userType,
+            'created_at'         => $this->createdAt,
+            'updated_at'         => $this->updatedAt,
+        ];
     }
+
 
     /**
      * Get the value of email
