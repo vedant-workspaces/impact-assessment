@@ -16,6 +16,16 @@ class NgoService
     public function registerNgo(RegisterNgoBo $registerNgoBo)
     {
         try {
+            // Check if email already exists
+            if (app(UsersRepository::class)->findByEmail($registerNgoBo->getOrganisationEmail())) {
+                return response()->json(['status' => 409, 'message' => 'Email already exists']);
+            }
+
+            // Check if username already exists
+            if (app(UsersRepository::class)->findByUserName($registerNgoBo->getUserName())) {
+                return response()->json(['status' => 409, 'message' => 'Username already exists']);
+            }
+
             $registerUserDao = $this->setRegisterUserDao($registerNgoBo);
     
             $registerNgoDao = $this->setRegisterNgoDao($registerNgoBo);

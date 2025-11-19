@@ -8,4 +8,8 @@ use App\Repositories\Dao\V1\RegisterUserDao;
 interface UsersRepository
 {
     public function insert(RegisterUserDao $registerUserDao): int;
+
+    public function findByEmail(string $email);
+
+    public function findByUserName(string $userName);
 }
