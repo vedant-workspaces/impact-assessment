@@ -8,6 +8,7 @@ use App\Repositories\Dao\V1\RegisterUserDao;
 use App\Repositories\V1\NgosRepository;
 use App\Repositories\V1\UsersRepository;
 use App\Services\Bo\V1\RegisterNgoBo;
+use Exception;
 use Illuminate\Support\Facades\Mail;
 
 class NgoService
@@ -30,8 +31,8 @@ class NgoService
             );
     
             return response()->json(['status' => 200, 'message' => 'NGO registered successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 400, 'message' => $e->getMessage()]);
+        } catch (Exception) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while registering NGO']);
         }
     }
 
