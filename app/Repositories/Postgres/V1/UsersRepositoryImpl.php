@@ -19,4 +19,14 @@ class UsersRepositoryImpl implements UsersRepository
 
         return $newRecord->id;
     }
+
+    public function findByEmail(string $email)
+    {
+        return Users::where('email', $email)->first();
+    }
+
+    public function findByUserName(string $userName)
+    {
+        return Users::where('username', $userName)->first();
+    }
 }
