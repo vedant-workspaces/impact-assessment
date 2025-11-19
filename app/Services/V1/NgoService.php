@@ -2,11 +2,14 @@
 
 namespace App\Services\V1;
 
+use App\Mail\NgoRegisteredMail;
 use App\Repositories\Dao\V1\RegisterNgoDao;
 use App\Repositories\Dao\V1\RegisterUserDao;
 use App\Repositories\V1\NgosRepository;
 use App\Repositories\V1\UsersRepository;
 use App\Services\Bo\V1\RegisterNgoBo;
+use Exception;
+use Illuminate\Support\Facades\Mail;
 
 class NgoService
 {
@@ -21,10 +24,15 @@ class NgoService
             $registerNgoDao->setUserId($userId);
     
             app(NgosRepository::class)->insert($registerNgoDao);
+
+            // Send confirmation email
+            Mail::to($registerNgoBo->getOrganisationEmail())
+                ->send(new NgoRegisteredMail($registerNgoBo->getOrganisationName(), $registerNgoBo->getUserName())
+            );
     
             return response()->json(['status' => 200, 'message' => 'NGO registered successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 400, 'message' => $e->getMessage()]);
+        } catch (Exception) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while registering NGO']);
         }
     }
 
