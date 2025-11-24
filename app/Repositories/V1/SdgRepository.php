@@ -4,7 +4,7 @@ namespace App\Repositories\V1;
 
 use Illuminate\Database\Eloquent\Collection;
 
-interface SdgsRepository
+interface SdgRepository
 {
     public function fetchSdgs(): Collection;
 }

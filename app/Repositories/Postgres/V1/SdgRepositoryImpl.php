@@ -2,15 +2,15 @@
 
 namespace App\Repositories\Postgres\V1;
 
-use App\Models\Sdgs;
-use App\Repositories\V1\SdgsRepository;
+use App\Models\Sdg;
+use App\Repositories\V1\SdgRepository;
 use Illuminate\Database\Eloquent\Collection;
 
-class SdgsRepositoryImpl implements SdgsRepository
+class SdgRepositoryImpl implements SdgRepository
 {
     public function fetchSdgs(): Collection
     {
-        return Sdgs::select('id', 'sdg_name')
+        return Sdg::select('id', 'sdg_name')
             ->where('is_deleted', 0)
             ->get();
     }

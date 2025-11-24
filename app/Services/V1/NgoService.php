@@ -5,8 +5,8 @@ namespace App\Services\V1;
 use App\Mail\NgoRegisteredMail;
 use App\Repositories\Dao\V1\RegisterNgoDao;
 use App\Repositories\Dao\V1\RegisterUserDao;
-use App\Repositories\V1\NgosRepository;
-use App\Repositories\V1\UsersRepository;
+use App\Repositories\V1\NgoRepository;
+use App\Repositories\V1\UserRepository;
 use App\Services\Bo\V1\RegisterNgoBo;
 use Exception;
 use Illuminate\Support\Facades\Mail;
@@ -17,12 +17,12 @@ class NgoService
     {
         try {
             // Check if email already exists
-            if (app(UsersRepository::class)->findByEmail($registerNgoBo->getOrganisationEmail())) {
+            if (app(UserRepository::class)->findByEmail($registerNgoBo->getOrganisationEmail())) {
                 return response()->json(['status' => 409, 'message' => 'Email already exists']);
             }
 
             // Check if username already exists
-            if (app(UsersRepository::class)->findByUserName($registerNgoBo->getUserName())) {
+            if (app(UserRepository::class)->findByUserName($registerNgoBo->getUserName())) {
                 return response()->json(['status' => 409, 'message' => 'Username already exists']);
             }
 
@@ -30,10 +30,10 @@ class NgoService
     
             $registerNgoDao = $this->setRegisterNgoDao($registerNgoBo);
     
-            $userId = app(UsersRepository::class)->insert($registerUserDao);
+            $userId = app(UserRepository::class)->insert($registerUserDao);
             $registerNgoDao->setUserId($userId);
     
-            app(NgosRepository::class)->insert($registerNgoDao);
+            app(NgoRepository::class)->insert($registerNgoDao);
 
             // Send confirmation email
             Mail::to($registerNgoBo->getOrganisationEmail())

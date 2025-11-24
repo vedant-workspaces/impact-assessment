@@ -2,12 +2,12 @@
 
 namespace App\Repositories\Postgres\V1;
 
-use App\Models\Ngos;
+use App\Models\Ngo;
 use App\Repositories\Dao\V1\RegisterNgoDao;
-use App\Repositories\V1\NgosRepository;
+use App\Repositories\V1\NgoRepository;
 use Carbon\Carbon;
 
-class NgosRepositoryImpl implements NgosRepository
+class NgoRepositoryImpl implements NgoRepository
 {
     public function insert(RegisterNgoDao $registerNgoDao)
     {
@@ -15,6 +15,6 @@ class NgosRepositoryImpl implements NgosRepository
         $registerNgoDao->setCreatedAt($currentDate->format('Y-m-d H:i:s'));
         $registerNgoDao->setUpdatedAt($currentDate->format('Y-m-d H:i:s'));
 
-        Ngos::create($registerNgoDao->toArray());
+        Ngo::create($registerNgoDao->toArray());
     }
 }
