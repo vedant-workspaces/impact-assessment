@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\V1\SdgsService;
+use App\Traits\V1\ApiResponseTrait;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class SdgsController extends Controller
 {
+    Use ApiResponseTrait;
+
     public function getSdgs(): JsonResponse
     {
         try {
@@ -15,16 +19,9 @@ class SdgsController extends Controller
 
             $data = $sdgsService->getSdgsData();
 
-            return response()->json([
-                'data' => $data,
-                'status_code' => 200
-            ]);
-
-        } catch (\Exception) {
-            return response()->json([
-                'data' => [],
-                'status_code' => 500
-            ]);
+            return $this->success($data, "SDGs retrieved successfully");
+        } catch (Exception) {
+            return $this->error("Failed to retrieve SDGs");
         }
     }
 }

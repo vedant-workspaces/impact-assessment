@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Repositories\Postgres\V1\NgosRepositoryImpl;
-use App\Repositories\Postgres\V1\PrimarySectorsRepositoryImpl;
-use App\Repositories\Postgres\V1\SdgsRepositoryImpl;
-use App\Repositories\Postgres\V1\UsersRepositoryImpl;
-use App\Repositories\V1\NgosRepository;
-use App\Repositories\V1\PrimarySectorsRepository;
-use App\Repositories\V1\SdgsRepository;
-use App\Repositories\V1\UsersRepository;
+use App\Repositories\Postgres\V1\NgoRepositoryImpl;
+use App\Repositories\Postgres\V1\PrimarySectorRepositoryImpl;
+use App\Repositories\Postgres\V1\SdgRepositoryImpl;
+use App\Repositories\Postgres\V1\UserRepositoryImpl;
+use App\Repositories\V1\NgoRepository;
+use App\Repositories\V1\PrimarySectorRepository;
+use App\Repositories\V1\SdgRepository;
+use App\Repositories\V1\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,10 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(PrimarySectorsRepository::class, PrimarySectorsRepositoryImpl::class);
-        $this->app->bind(SdgsRepository::class, SdgsRepositoryImpl::class);
-        $this->app->bind(UsersRepository::class, UsersRepositoryImpl::class);
-        $this->app->bind(NgosRepository::class, NgosRepositoryImpl::class);
+        $this->app->bind(PrimarySectorRepository::class, PrimarySectorRepositoryImpl::class);
+        $this->app->bind(SdgRepository::class, SdgRepositoryImpl::class);
+        $this->app->bind(UserRepository::class, UserRepositoryImpl::class);
+        $this->app->bind(NgoRepository::class, NgoRepositoryImpl::class);
     }
 
     /**

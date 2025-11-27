@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sdgs extends Model
+class PrimarySector extends Model
 {
-    protected $table = 'sdgs';
+    protected $table = 'primary_sectors';
 
     protected $fillable = [
         'id',
-        'sdg_name',
+        'primary_sector_name',
     ];
 }
