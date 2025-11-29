@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\LoginController;
+use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\PrimarySectorController;
 use App\Http\Controllers\Api\V1\NgoController;
 use App\Http\Controllers\Api\V1\SdgsController;
@@ -20,6 +21,11 @@ Route::prefix('v1')->group(function () {
     Route::post('auth/refresh', [LoginController::class, 'refresh']);
 
     Route::post('auth/logout', [LoginController::class, 'logout']);
+
+    Route::middleware(['jwt', 'role:1'])->group(function () {
+        Route::post('add-members', [MemberController::class, 'add']);
+    });
+
 
     /* 
         Example routings with JWT middleware

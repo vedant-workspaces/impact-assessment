@@ -18,7 +18,7 @@ class RoleMiddleware
     {
         $user = $request->auth_user;
 
-        if (!$user || $user->user_type !== $role) {
+        if (!$user || (int)$user->user_type !== (int)$role) {
             return new JsonResponse([
                 'success' => false,
                 'message' => "Access denied: Only {$role} users allowed."
