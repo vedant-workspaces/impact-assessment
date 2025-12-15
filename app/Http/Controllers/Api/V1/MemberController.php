@@ -7,6 +7,7 @@ use App\Http\Requests\V1\AddMemberRequest;
 use App\Services\Bo\V1\MemberBo;
 use App\Services\V1\MemberService;
 use App\Traits\V1\ApiResponseTrait;
+use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
@@ -34,5 +35,26 @@ class MemberController extends Controller
         $memberBo->setStatus($data['status']);
 
         return $this->service->create($memberBo);
+    }
+
+    public function get(Request $request)
+    {
+        $perPage = (int) $request->query('per_page', 15);
+        $page    = (int) $request->query('page', 1);
+
+        $paginator = $this->service->getActiveMembers($perPage, $page);
+
+        // Format response: data + meta
+        $data = [
+            'members' => $paginator->items(),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+            ],
+        ];
+
+        return $this->success($data, 'Active members fetched successfully');
     }
 }

@@ -26,32 +26,7 @@ Route::prefix('v1')->group(function () {
         Route::post('add-members', [MemberController::class, 'add']);
     });
 
-
-    /* 
-        Example routings with JWT middleware
-
-        Route::middleware('jwt')->group(function () {
-            Route::get('/v1/ngo/dashboard', ...);
-        });
-
-        Example routings with JWT middleware and Role middleware
-
-        Route::middleware(['jwt', 'role:1'])->group(function () {
-            Route::get('/v1/ngo/dashboard', function () {
-                return "NGO dashboard";
-            });
-        });
-
-        Route::middleware(['jwt', 'role:2'])->group(function () {
-            Route::get('/v1/donor/dashboard', function () {
-                return "Donor dashboard";
-            });
-        });
-
-        Route::middleware(['jwt', 'role:3'])->group(function () {
-            Route::get('/v1/worker/dashboard', function () {
-                return "Worker dashboard";
-            });
-        });
-    */
+    Route::middleware(['jwt', 'role:1'])->group(function () {
+        Route::get('members', [MemberController::class, 'get']);
+    });
 });

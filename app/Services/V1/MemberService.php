@@ -9,6 +9,7 @@ use App\Repositories\V1\MemberRepository;
 use App\Repositories\V1\UserRepository;
 use App\Services\Bo\V1\MemberBo;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -82,5 +83,10 @@ class MemberService
         $memberDao->setAssignedBy(Auth::id());
 
         return $memberDao;
+    }
+
+    public function getActiveMembers(int $perPage = 15, int $page = 1): LengthAwarePaginator
+    {
+        return $this->memberRepository->getActiveMembers($perPage, $page);
     }
 }
