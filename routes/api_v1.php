@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\LoginController;
 use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\PrimarySectorController;
 use App\Http\Controllers\Api\V1\NgoController;
+use App\Http\Controllers\Api\V1\ProgramController;
 use App\Http\Controllers\Api\V1\SdgsController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,4 +30,10 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['jwt', 'role:1'])->group(function () {
         Route::get('members', [MemberController::class, 'get']);
     });
+
+    // Route::middleware(['jwt', 'role:1'])->group(function () {
+    Route::middleware(['jwt'])->group(function () {
+        Route::post('add-program', [ProgramController::class, 'add']);
+    });
+
 });
