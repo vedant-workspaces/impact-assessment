@@ -13,6 +13,8 @@ class Survey extends Model
         'start_date',
         'end_date',
         'assigned_by',
+        'created_at',
+        'updated_at',
         'is_deleted',
     ];
 

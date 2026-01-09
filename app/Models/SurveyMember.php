@@ -12,6 +12,8 @@ class SurveyMember extends Model
         'survey_id',
         'member_id',
         'role',
+        'created_at',
+        'updated_at',
         'is_deleted',
     ];
 
