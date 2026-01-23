@@ -44,4 +44,15 @@ class ProgramController extends Controller
             return $this->error("Failed to retrieve programs");
         }
     }
+
+    public function getProgramsWithMembers(): JsonResponse
+    {
+        try {
+            $data = $this->programService->getProgramsWithMembersData();
+
+            return $this->success($data, "Programs with members retrieved successfully");
+        } catch (\Exception) {
+            return $this->error("Failed to retrieve programs with members");
+        }
+    }
 }

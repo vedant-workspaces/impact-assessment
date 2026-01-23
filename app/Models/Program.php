@@ -30,4 +30,9 @@ class Program extends Model
         return $this->hasMany(ProgramMember::class, 'program_id')
                     ->where('is_deleted', 0);
     }
+
+    public function assignedBy()
+    {
+        return $this->belongsTo(Member::class, 'assigned_by');
+    }
 }
