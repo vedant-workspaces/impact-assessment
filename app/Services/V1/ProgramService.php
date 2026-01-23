@@ -33,6 +33,11 @@ class ProgramService
         }
     }
 
+    public function getProgramNamesData(): array
+    {
+        return $this->programRepository->getProgramNames();
+    }
+
     private function setProgramDao(ProgramBo $programBo): ProgramDao
     {
         $programDao = new ProgramDao();

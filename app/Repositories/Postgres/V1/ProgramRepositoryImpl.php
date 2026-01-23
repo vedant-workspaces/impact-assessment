@@ -13,4 +13,17 @@ class ProgramRepositoryImpl implements ProgramRepository
         $program = Program::create($programDao->toArray());
         return $program->id;
     }
+
+    public function getProgramNames(): array
+    {
+        $programs = Program::select('id', 'title')->where('is_deleted', 0)->get();
+
+        return $programs->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'title' => $p->title,
+                'percentage' => 0
+            ];
+        })->toArray();
+    }
 }

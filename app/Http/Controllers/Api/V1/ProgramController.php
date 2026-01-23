@@ -33,4 +33,15 @@ class ProgramController extends Controller
 
         return $this->programService->create($programBo);
     }
+
+    public function getProgramNames(): JsonResponse
+    {
+        try {
+            $data = $this->programService->getProgramNamesData();
+
+            return $this->success($data, "Programs retrieved successfully");
+        } catch (\Exception) {
+            return $this->error("Failed to retrieve programs");
+        }
+    }
 }
