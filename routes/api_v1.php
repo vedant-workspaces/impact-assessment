@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['jwt'])->group(function () {
         Route::post('add-program', [ProgramController::class, 'add']);
         Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
+        Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
     });
 
 });
