@@ -10,6 +10,7 @@ class Survey extends Model
 
     protected $fillable = [
         'title',
+        'program_id',
         'start_date',
         'end_date',
         'assigned_by',

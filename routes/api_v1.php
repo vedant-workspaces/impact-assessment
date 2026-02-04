@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\PrimarySectorController;
 use App\Http\Controllers\Api\V1\NgoController;
 use App\Http\Controllers\Api\V1\ProgramController;
 use App\Http\Controllers\Api\V1\SdgsController;
+use App\Http\Controllers\Api\V1\SurveyController;
 use Illuminate\Support\Facades\Route;
 
 // routing for API v1
@@ -34,6 +35,7 @@ Route::prefix('v1')->group(function () {
     // Route::middleware(['jwt', 'role:1'])->group(function () {
     Route::middleware(['jwt'])->group(function () {
         Route::post('add-program', [ProgramController::class, 'add']);
+            Route::post('add-survey', [SurveyController::class, 'add']);
         Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
         Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
     });

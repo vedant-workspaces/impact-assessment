@@ -12,6 +12,8 @@ return new class extends Migration {
 
             $table->string('title');
 
+            // FK to programs table (survey belongs to a program)
+            $table->unsignedBigInteger('program_id')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
 
@@ -30,6 +32,11 @@ return new class extends Migration {
                   ->references('id')
                   ->on('members')
                   ->onDelete('restrict');
+
+            $table->foreign('program_id')
+                ->references('id')
+                ->on('programs')
+                ->onDelete('restrict');
         });
     }
 
