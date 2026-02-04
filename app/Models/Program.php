@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasNgo;
 
 class Program extends Model
 {
+    use HasNgo;
     protected $table = 'programs';
 
     protected $fillable = [

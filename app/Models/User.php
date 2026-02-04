@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Traits\HasNgo;
 
 class User extends Authenticatable implements JWTSubject
 {
+    use HasNgo;
     protected $table = 'users';
 
     protected $fillable = [
