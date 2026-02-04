@@ -46,6 +46,7 @@ class ProgramService
     private function setProgramDao(ProgramBo $programBo): ProgramDao
     {
         $programDao = new ProgramDao();
+        $programDao->setNgoId(app('current_ngo_id') ?? 0);
         $programDao->setTitle($programBo->getTitle());
         $programDao->setDescription($programBo->getDescription());
         $programDao->setStartDate($programBo->getStartDate());

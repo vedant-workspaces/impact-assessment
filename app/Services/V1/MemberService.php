@@ -64,12 +64,16 @@ class MemberService
         $registerUserDao->setPassword($memberBo->getPassword());
         $registerUserDao->setUserType(3);
 
+        // Associate member user with current NGO
+        $registerUserDao->setNgoId(app('current_ngo_id') ?? 0);
+
         return $registerUserDao;
     }
 
     private function setMemberDao(MemberBo $memberBo, int $userId): MemberDao
     {
         $memberDao = new MemberDao();
+        $memberDao->setNgoId(app('current_ngo_id') ?? 0);
         $memberDao->setUserId($userId);
         $memberDao->setFullName($memberBo->getFullName());
         $memberDao->setGender($memberBo->getGender());

@@ -24,7 +24,10 @@ class MemberRepositoryImpl implements MemberRepository
     public function getActiveMembers(int $perPage = 15, int $page = 1): LengthAwarePaginator
     {
         // Eager load the user relation if you want login/email details
-        $query = Member::where('status', 1);
+        $ngoId = app('current_ngo_id') ?? 0;
+
+        $query = Member::where('status', 1)
+            ->where('ngo_id', $ngoId);
 
         // Use the paginator with page override
         return $query->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);

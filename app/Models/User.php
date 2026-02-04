@@ -13,7 +13,8 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'password',
         'email',
-        'user_type'
+        'user_type',
+        'ngo_id'
     ];
 
     // Required by JWT
@@ -25,6 +26,8 @@ class User extends Authenticatable implements JWTSubject
     // Add any custom claims to the token
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'ngo_id' => $this->ngo_id ?? 0,
+        ];
     }
 }

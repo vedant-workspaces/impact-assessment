@@ -11,4 +11,6 @@ interface UserRepository
     public function findByEmail(string $email);
 
     public function findByUserName(string $userName);
+
+    public function updateNgoId(int $userId, int $ngoId): bool;
 }

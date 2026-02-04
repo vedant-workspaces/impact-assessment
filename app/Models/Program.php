@@ -9,6 +9,7 @@ class Program extends Model
     protected $table = 'programs';
 
     protected $fillable = [
+        'ngo_id',
         'title',
         'description',
         'start_date',

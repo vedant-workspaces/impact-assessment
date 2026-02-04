@@ -33,7 +33,10 @@ class NgoService
             $userId = app(UserRepository::class)->insert($registerUserDao);
             $registerNgoDao->setUserId($userId);
     
-            app(NgoRepository::class)->insert($registerNgoDao);
+            $ngoId = app(NgoRepository::class)->insert($registerNgoDao);
+
+            // Update the created user's ngo_id so the user is linked to the NGO
+            app(UserRepository::class)->updateNgoId($userId, $ngoId);
 
             // Send confirmation email
             Mail::to($registerNgoBo->getOrganisationEmail())

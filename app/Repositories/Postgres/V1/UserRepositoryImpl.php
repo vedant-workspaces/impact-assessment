@@ -29,4 +29,9 @@ class UserRepositoryImpl implements UserRepository
     {
         return User::where('username', $userName)->first();
     }
+
+    public function updateNgoId(int $userId, int $ngoId): bool
+    {
+        return User::where('id', $userId)->update(['ngo_id' => $ngoId]) === 1;
+    }
 }

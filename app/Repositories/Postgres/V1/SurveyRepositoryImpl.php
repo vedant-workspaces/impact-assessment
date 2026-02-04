@@ -16,7 +16,11 @@ class SurveyRepositoryImpl implements SurveyRepository
 
     public function getSurveyNames(): array
     {
-        $surveys = Survey::select('id', 'title')->where('is_deleted', 0)->get();
+        $ngoId = app('current_ngo_id') ?? 0;
+        $surveys = Survey::select('id', 'title')
+            ->where('is_deleted', 0)
+            ->where('ngo_id', $ngoId)
+            ->get();
 
         return $surveys->map(function ($s) {
             return [
@@ -29,7 +33,10 @@ class SurveyRepositoryImpl implements SurveyRepository
 
     public function getSurveysWithMembers(): array
     {
+        $ngoId = app('current_ngo_id') ?? 0;
+
         $surveys = Survey::where('is_deleted', 0)
+            ->where('ngo_id', $ngoId)
             ->with([
                 'assignedBy:id,full_name',
                 'surveyMembers.member:id,full_name'

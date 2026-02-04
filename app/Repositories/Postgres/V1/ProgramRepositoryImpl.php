@@ -16,7 +16,11 @@ class ProgramRepositoryImpl implements ProgramRepository
 
     public function getProgramNames(): array
     {
-        $programs = Program::select('id', 'title')->where('is_deleted', 0)->get();
+        $ngoId = app('current_ngo_id') ?? 0;
+        $programs = Program::select('id', 'title')
+            ->where('is_deleted', 0)
+            ->where('ngo_id', $ngoId)
+            ->get();
 
         return $programs->map(function ($p) {
             return [
@@ -29,7 +33,10 @@ class ProgramRepositoryImpl implements ProgramRepository
 
     public function getProgramsWithMembers(): array
     {
+        $ngoId = app('current_ngo_id') ?? 0;
+
         $programs = Program::where('is_deleted', 0)
+            ->where('ngo_id', $ngoId)
             ->with([
                 'assignedBy:id,full_name',
                 'programMembers.member:id,full_name'
