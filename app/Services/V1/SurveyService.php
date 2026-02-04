@@ -46,6 +46,7 @@ class SurveyService
     private function setSurveyDao(SurveyBo $surveyBo): SurveyDao
     {
         $surveyDao = new SurveyDao();
+        $surveyDao->setNgoId(app('current_ngo_id') ?? 0);
         $surveyDao->setTitle($surveyBo->getTitle());
         $surveyDao->setStartDate($surveyBo->getStartDate());
         $surveyDao->setEndDate($surveyBo->getEndDate());

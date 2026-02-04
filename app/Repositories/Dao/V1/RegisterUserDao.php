@@ -12,6 +12,8 @@ class RegisterUserDao
 
     public int $userType = 0;
 
+    public int $ngoId = 0;
+
     public string $createdAt = '';
 
     public string $updatedAt = '';
@@ -30,6 +32,9 @@ class RegisterUserDao
         }
         if (isset($this->userType)) {
             $collection['user_type'] = $this->userType;
+        }
+        if (isset($this->ngoId)) {
+            $collection['ngo_id'] = $this->ngoId;
         }
         if (isset($this->createdAt)) {
             $collection['created_at'] = $this->createdAt;
@@ -117,6 +122,18 @@ class RegisterUserDao
     public function setUserType($userType)
     {
         $this->userType = $userType;
+
+        return $this;
+    }
+
+    public function getNgoId()
+    {
+        return $this->ngoId;
+    }
+
+    public function setNgoId($ngoId)
+    {
+        $this->ngoId = $ngoId;
 
         return $this;
     }

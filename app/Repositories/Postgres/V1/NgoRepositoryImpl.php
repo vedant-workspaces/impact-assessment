@@ -14,7 +14,8 @@ class NgoRepositoryImpl implements NgoRepository
         $currentDate = Carbon::now();
         $registerNgoDao->setCreatedAt($currentDate->format('Y-m-d H:i:s'));
         $registerNgoDao->setUpdatedAt($currentDate->format('Y-m-d H:i:s'));
+        $ngo = Ngo::create($registerNgoDao->toArray());
 
-        Ngo::create($registerNgoDao->toArray());
+        return $ngo->id;
     }
 }

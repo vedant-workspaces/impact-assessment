@@ -22,6 +22,13 @@ class JwtMiddleware
             $user = JWTAuth::parseToken()->authenticate();
             $request->auth_user = $user;
 
+            // Make ngo_id easily accessible throughout the app for this request
+            $ngoId = $user->ngo_id ?? 0;
+            // attach to request
+            $request->current_ngo_id = $ngoId;
+            // bind into the container for easy global access via app('current_ngo_id')
+            app()->instance('current_ngo_id', $ngoId);
+
         } catch (Exception $e) {
             return new JsonResponse([
                 'success' => false,

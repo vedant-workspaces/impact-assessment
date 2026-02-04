@@ -10,6 +10,7 @@ class Member extends Model
 
     protected $fillable = [
         'user_id',
+        'ngo_id',
         'full_name',
         'gender',
         'designation',

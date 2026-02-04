@@ -4,6 +4,7 @@ namespace App\Repositories\Dao\V1;
 
 class SurveyDao
 {
+    public int $ngoId = 0;
     public string $title = '';
 
     public string $startDate = '';
@@ -23,6 +24,9 @@ class SurveyDao
         $collection = [];
         if (isset($this->title)) {
             $collection['title'] = $this->title;
+        }
+        if (isset($this->ngoId)) {
+            $collection['ngo_id'] = $this->ngoId;
         }
         if (isset($this->startDate)) {
             $collection['start_date'] = $this->startDate;
@@ -49,6 +53,18 @@ class SurveyDao
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function getNgoId()
+    {
+        return $this->ngoId;
+    }
+
+    public function setNgoId($ngoId)
+    {
+        $this->ngoId = $ngoId;
+
+        return $this;
     }
 
     public function setTitle($title)

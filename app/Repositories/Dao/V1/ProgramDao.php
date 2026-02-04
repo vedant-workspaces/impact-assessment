@@ -4,6 +4,7 @@ namespace App\Repositories\Dao\V1;
 
 class ProgramDao
 {
+    public int $ngoId = 0;
     public string $title = '';
 
     public string $description = '';
@@ -23,6 +24,9 @@ class ProgramDao
         $collection = [];
         if (isset($this->title)) {
             $collection['title'] = $this->title;
+        }
+        if (isset($this->ngoId)) {
+            $collection['ngo_id'] = $this->ngoId;
         }
         if (isset($this->description)) {
             $collection['description'] = $this->description;
@@ -52,6 +56,18 @@ class ProgramDao
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function getNgoId()
+    {
+        return $this->ngoId;
+    }
+
+    public function setNgoId($ngoId)
+    {
+        $this->ngoId = $ngoId;
+
+        return $this;
     }
 
     /**

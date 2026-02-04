@@ -6,6 +6,8 @@ class MemberDao
 {
     public int $userId = 0;
 
+    public int $ngoId = 0;
+
     public string $fullName = '';
 
     public string $gender = '';
@@ -36,6 +38,9 @@ class MemberDao
 
         if (isset($this->userId)) {
             $collection['user_id'] = $this->userId;
+        }
+        if (isset($this->ngoId)) {
+            $collection['ngo_id'] = $this->ngoId;
         }
         if (isset($this->fullName)) {
             $collection['full_name'] = $this->fullName;
@@ -93,6 +98,18 @@ class MemberDao
     public function setUserId($userId)
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getNgoId()
+    {
+        return $this->ngoId;
+    }
+
+    public function setNgoId($ngoId)
+    {
+        $this->ngoId = $ngoId;
 
         return $this;
     }
