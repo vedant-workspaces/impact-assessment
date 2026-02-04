@@ -36,6 +36,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['jwt'])->group(function () {
         Route::post('add-program', [ProgramController::class, 'add']);
             Route::post('add-survey', [SurveyController::class, 'add']);
+            Route::get('surveys/names', [SurveyController::class, 'getSurveyNames']);
+            Route::get('surveys', [SurveyController::class, 'getSurveysWithMembers']);
         Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
         Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
     });

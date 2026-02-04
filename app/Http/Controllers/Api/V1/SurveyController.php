@@ -31,4 +31,26 @@ class SurveyController extends Controller
 
         return $this->surveyService->create($surveyBo);
     }
+
+    public function getSurveyNames(): JsonResponse
+    {
+        try {
+            $data = $this->surveyService->getSurveyNamesData();
+
+            return $this->success($data, "Surveys retrieved successfully");
+        } catch (\Exception) {
+            return $this->error("Failed to retrieve surveys");
+        }
+    }
+
+    public function getSurveysWithMembers(): JsonResponse
+    {
+        try {
+            $data = $this->surveyService->getSurveysWithMembersData();
+
+            return $this->success($data, "Surveys with members retrieved successfully");
+        } catch (\Exception) {
+            return $this->error("Failed to retrieve surveys with members");
+        }
+    }
 }

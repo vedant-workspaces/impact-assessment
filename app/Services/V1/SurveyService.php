@@ -33,6 +33,16 @@ class SurveyService
         }
     }
 
+    public function getSurveyNamesData(): array
+    {
+        return $this->surveyRepository->getSurveyNames();
+    }
+
+    public function getSurveysWithMembersData(): array
+    {
+        return $this->surveyRepository->getSurveysWithMembers();
+    }
+
     private function setSurveyDao(SurveyBo $surveyBo): SurveyDao
     {
         $surveyDao = new SurveyDao();

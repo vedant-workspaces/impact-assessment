@@ -30,4 +30,14 @@ class Survey extends Model
         return $this->hasMany(SurveyMember::class, 'survey_id')
                      ->where('is_deleted', 0);
     }
+
+    public function assignedBy()
+    {
+        return $this->belongsTo(Member::class, 'assigned_by');
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'program_id');
+    }
 }
