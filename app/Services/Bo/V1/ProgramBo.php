@@ -12,7 +12,7 @@ class ProgramBo
 
     public string $endDate = '';
 
-    public int $leaderId = 0;
+    public array $leaderIds = [];
 
     public array $memberIds = [];
 
@@ -99,9 +99,9 @@ class ProgramBo
     /**
      * Get the value of leaderId
      */ 
-    public function getLeaderId()
+    public function getLeaderIds()
     {
-        return $this->leaderId;
+        return $this->leaderIds;
     }
 
     /**
@@ -109,9 +109,9 @@ class ProgramBo
      *
      * @return  self
      */ 
-    public function setLeaderId($leaderId)
+    public function setLeaderIds($leaderIds)
     {
-        $this->leaderId = $leaderId;
+        $this->leaderIds = $leaderIds;
 
         return $this;
     }

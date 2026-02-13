@@ -23,7 +23,8 @@ class AddSurveyRequest extends FormRequest
 
             'program_id'  => 'required|integer|exists:programs,id',
 
-            'leader_id'   => 'required|integer|exists:members,id',
+            'leader_ids'   => 'required|array|min:1',
+            'leader_ids.*' => 'integer|exists:members,id',
             'member_ids'  => 'required|array|min:1',
             'member_ids.*'=> 'integer|exists:members,id',
             'questions' => 'nullable|array',
@@ -51,7 +52,7 @@ class AddSurveyRequest extends FormRequest
         'start_date',
         'end_date',
         'program_id',
-        'leader_id',
+        'leader_ids',
         'member_ids',
         'questions',
     ];
@@ -63,7 +64,9 @@ class AddSurveyRequest extends FormRequest
             'title.max' => 'Title must be less than 255 characters',
             'end_date.after_or_equal' => 'End date must be greater than or equal to start date',
 
-            'leader_id.required' => 'Leader ID is required',
+            'leader_ids.required' => 'Leader IDs is required',
+            'leader_ids.min' => 'Leader IDs must be greater than or equal to 1',
+            'leader_ids.*.integer' => 'Leader IDs must be integer',
             'member_ids.required' => 'Member IDs is required',
             'member_ids.min' => 'Member IDs must be greater than or equal to 1',
             'member_ids.*.integer' => 'Member IDs must be integer',

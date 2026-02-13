@@ -27,7 +27,7 @@ class SurveyController extends Controller
         $surveyBo->setStartDate($data['start_date'] ?? null);
         $surveyBo->setEndDate($data['end_date'] ?? null);
         $surveyBo->setProgramId($data['program_id']);
-        $surveyBo->setLeaderId($data['leader_id']);
+        $surveyBo->setLeaderIds($data['leader_ids']);
         $surveyBo->setMemberIds($data['member_ids']);
         $surveyBo->setQuestions($data['questions'] ?? []);
 

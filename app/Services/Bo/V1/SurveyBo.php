@@ -10,7 +10,7 @@ class SurveyBo
 
     public string $endDate = '';
 
-    public int $leaderId = 0;
+    public array $leaderIds = [];
 
     public int $programId = 0;
 
@@ -59,14 +59,14 @@ class SurveyBo
         return $this;
     }
 
-    public function getLeaderId()
+    public function getLeaderIds()
     {
-        return $this->leaderId;
+        return $this->leaderIds;
     }
 
-    public function setLeaderId($leaderId)
+    public function setLeaderIds($leaderIds)
     {
-        $this->leaderId = $leaderId;
+        $this->leaderIds = $leaderIds;
 
         return $this;
     }

@@ -44,6 +44,7 @@ class ProgramRepositoryImpl implements ProgramRepository
             ->get(['id', 'title', 'description', 'start_date', 'end_date', 'assigned_by']);
 
         return $programs->map(function ($program) {
+            $leaderIds = collect($program->programMembers)->filter(function($pm){ return intval($pm->role) === 1; })->map(function($pm){ return $pm->member_id; })->values()->toArray();
             return [
                 'id' => $program->id,
                 'title' => $program->title,
@@ -51,6 +52,7 @@ class ProgramRepositoryImpl implements ProgramRepository
                 'start_date' => $program->start_date?->toDateString(),
                 'end_date' => $program->end_date?->toDateString(),
                 'assigned_by' => $program->assignedBy?->full_name ?? null,
+                'leader_ids' => $leaderIds,
                 'program_completion' => 100,
                 'no_of_surveys' => 0,
                 'members' => collect($program->programMembers)->map(function ($pm) {

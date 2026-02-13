@@ -103,11 +103,13 @@ class SurveyService
 
     private function addSurveyLeader(SurveyBo $surveyBo, int $surveyId)
     {
-        $surveyMembersDao = new SurveyMembersDao();
-        $surveyMembersDao->setSurveyId($surveyId);
-        $surveyMembersDao->setMemberIds($surveyBo->getLeaderId());
-        $surveyMembersDao->setRole(CommonConstants::PROGRAM_LEADER_ROLE);
+        foreach ($surveyBo->getLeaderIds() as $leaderId) {
+            $surveyMembersDao = new SurveyMembersDao();
+            $surveyMembersDao->setSurveyId($surveyId);
+            $surveyMembersDao->setMemberIds($leaderId);
+            $surveyMembersDao->setRole(CommonConstants::PROGRAM_LEADER_ROLE);
 
-        $this->surveyMembersRepository->addSurveyMembers($surveyMembersDao);
+            $this->surveyMembersRepository->addSurveyMembers($surveyMembersDao);
+        }
     }
 }
