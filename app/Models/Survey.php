@@ -12,6 +12,7 @@ class Survey extends Model
 
     protected $fillable = [
         'ngo_id',
+        'description',
         'title',
         'program_id',
         'start_date',
@@ -32,6 +33,13 @@ class Survey extends Model
     {
         return $this->hasMany(SurveyMember::class, 'survey_id')
                      ->where('is_deleted', 0);
+    }
+
+    public function surveyQuestions()
+    {
+        return $this->hasMany(SurveyQuestion::class, 'survey_id')
+                     ->where('is_deleted', 0)
+                     ->orderBy('order');
     }
 
     public function assignedBy()

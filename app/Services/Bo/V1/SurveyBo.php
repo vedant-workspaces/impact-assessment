@@ -16,6 +16,13 @@ class SurveyBo
 
     public array $memberIds = [];
 
+    public string $description = '';
+
+    /**
+     * Questions array expected in the format provided by the client
+     */
+    public array $questions = [];
+
     public function getTitle()
     {
         return $this->title;
@@ -76,6 +83,18 @@ class SurveyBo
         return $this;
     }
 
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getMemberIds()
     {
         return $this->memberIds;
@@ -84,6 +103,18 @@ class SurveyBo
     public function setMemberIds($memberIds)
     {
         $this->memberIds = $memberIds;
+
+        return $this;
+    }
+
+    public function getQuestions()
+    {
+        return $this->questions;
+    }
+
+    public function setQuestions($questions)
+    {
+        $this->questions = $questions;
 
         return $this;
     }

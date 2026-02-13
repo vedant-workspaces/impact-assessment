@@ -19,12 +19,21 @@ class AddSurveyRequest extends FormRequest
             'title'       => 'required|string|max:255',
             'start_date'  => 'nullable|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'description' => 'nullable|string',
 
             'program_id'  => 'required|integer|exists:programs,id',
 
             'leader_id'   => 'required|integer|exists:members,id',
             'member_ids'  => 'required|array|min:1',
             'member_ids.*'=> 'integer|exists:members,id',
+            'questions' => 'nullable|array',
+            'questions.*.order' => 'required_with:questions|integer',
+            'questions.*.label' => 'required_with:questions|string',
+            'questions.*.type' => 'required_with:questions|string',
+            'questions.*.required' => 'nullable|boolean',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.options.*.label' => 'required_with:questions.*.options|string',
+            'questions.*.options.*.order' => 'nullable|integer',
         ];
     }
 
@@ -38,11 +47,13 @@ class AddSurveyRequest extends FormRequest
 
     protected $fields = [
         'title',
+        'description',
         'start_date',
         'end_date',
         'program_id',
         'leader_id',
         'member_ids',
+        'questions',
     ];
 
     public function messages(): array

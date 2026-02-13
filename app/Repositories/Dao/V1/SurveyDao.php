@@ -11,6 +11,8 @@ class SurveyDao
 
     public string $endDate = '';
 
+    public string $description = '';
+
     public int $programId = 0;
 
     public int $assignedBy = 0;
@@ -33,6 +35,9 @@ class SurveyDao
         }
         if (isset($this->endDate)) {
             $collection['end_date'] = $this->endDate;
+        }
+        if (isset($this->description)) {
+            $collection['description'] = $this->description;
         }
         if (isset($this->programId)) {
             $collection['program_id'] = $this->programId;
@@ -106,6 +111,18 @@ class SurveyDao
     public function setProgramId($programId)
     {
         $this->programId = $programId;
+
+        return $this;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
 
         return $this;
     }
