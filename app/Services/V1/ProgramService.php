@@ -43,6 +43,21 @@ class ProgramService
         return $this->programRepository->getProgramsWithMembers();
     }
 
+    public function deleteProgramById(int $programId)
+    {
+        try {
+            $deleted = $this->programRepository->deleteProgram($programId);
+
+            if (!$deleted) {
+                return response()->json(['status' => 404, 'message' => 'Program not found or already deleted']);
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Program deleted successfully']);
+        } catch (Exception) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while deleting program']);
+        }
+    }
+
     private function setProgramDao(ProgramBo $programBo): ProgramDao
     {
         $programDao = new ProgramDao();

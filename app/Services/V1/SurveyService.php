@@ -41,9 +41,29 @@ class SurveyService
         return $this->surveyRepository->getSurveyNames();
     }
 
-    public function getSurveysWithMembersData(): array
+    public function getSurveysWithMembersData(?int $programId = null): array
     {
-        return $this->surveyRepository->getSurveysWithMembers();
+        return $this->surveyRepository->getSurveysWithMembers($programId);
+    }
+
+    public function getSurveyDetailsData(int $surveyId): array
+    {
+        return $this->surveyRepository->getSurveyDetails($surveyId);
+    }
+
+    public function deleteSurveyById(int $surveyId)
+    {
+        try {
+            $deleted = $this->surveyRepository->deleteSurvey($surveyId);
+
+            if (!$deleted) {
+                return response()->json(['status' => 404, 'message' => 'Survey not found or already deleted']);
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Survey deleted successfully']);
+        } catch (Exception) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while deleting survey']);
+        }
     }
 
     private function setSurveyDao(SurveyBo $surveyBo): SurveyDao

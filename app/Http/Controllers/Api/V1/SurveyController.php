@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\AddSurveyRequest;
+use Illuminate\Http\Request;
 use App\Services\Bo\V1\SurveyBo;
 use App\Services\V1\SurveyService;
 use App\Traits\V1\ApiResponseTrait;
@@ -45,14 +46,64 @@ class SurveyController extends Controller
         }
     }
 
-    public function getSurveysWithMembers(): JsonResponse
+    public function getSurveysWithMembers(Request $request): JsonResponse
     {
         try {
-            $data = $this->surveyService->getSurveysWithMembersData();
+            $programId = $request->input('program_id');
+
+            if (is_null($programId) || $programId === '') {
+                return $this->error('program_id is required', 422);
+            }
+
+            if (!is_numeric($programId)) {
+                return $this->error('program_id must be an integer', 422);
+            }
+
+            $data = $this->surveyService->getSurveysWithMembersData((int) $programId);
 
             return $this->success($data, "Surveys with members retrieved successfully");
         } catch (\Exception) {
             return $this->error("Failed to retrieve surveys with members");
         }
     }
+
+    public function getDetails(Request $request): JsonResponse
+    {
+        try {
+            $surveyId = $request->input('survey_id');
+
+            if (is_null($surveyId) || $surveyId === '') {
+                return $this->error('survey_id is required', 422);
+            }
+
+            if (!is_numeric($surveyId)) {
+                return $this->error('survey_id must be an integer', 422);
+            }
+
+            $data = $this->surveyService->getSurveyDetailsData((int) $surveyId);
+
+            return $this->success($data, 'Survey details retrieved successfully');
+        } catch (\Exception) {
+            return $this->error('Failed to retrieve survey questions');
+        }
+    }
+
+        public function deleteSurvey(Request $request): JsonResponse
+        {
+            try {
+                $surveyId = $request->input('survey_id');
+
+                if (is_null($surveyId) || $surveyId === '') {
+                    return $this->error('survey_id is required', 422);
+                }
+
+                if (!is_numeric($surveyId)) {
+                    return $this->error('survey_id must be an integer', 422);
+                }
+
+                return $this->surveyService->deleteSurveyById((int) $surveyId);
+            } catch (\Exception) {
+                return $this->error('Failed to delete survey');
+            }
+        }
 }

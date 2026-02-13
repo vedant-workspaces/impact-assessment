@@ -11,4 +11,6 @@ interface ProgramRepository
     public function getProgramNames(): array;
 
     public function getProgramsWithMembers(): array;
+
+    public function deleteProgram(int $programId): bool;
 }
