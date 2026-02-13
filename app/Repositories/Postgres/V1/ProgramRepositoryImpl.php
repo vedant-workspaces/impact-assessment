@@ -68,4 +68,23 @@ class ProgramRepositoryImpl implements ProgramRepository
             ];
         })->toArray();
     }
+
+    public function deleteProgram(int $programId): bool
+    {
+        $ngoId = app('current_ngo_id') ?? 0;
+
+        $program = Program::where('id', $programId)
+            ->where('ngo_id', $ngoId)
+            ->where('is_deleted', 0)
+            ->first();
+
+        if (!$program) {
+            return false;
+        }
+
+        $program->is_deleted = 1;
+        $program->updated_at = now();
+
+        return $program->save();
+    }
 }

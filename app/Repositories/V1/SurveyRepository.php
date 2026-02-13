@@ -10,5 +10,9 @@ interface SurveyRepository
 
     public function getSurveyNames(): array;
 
-    public function getSurveysWithMembers(): array;
+    public function getSurveysWithMembers(?int $programId = null): array;
+
+    public function getSurveyDetails(int $surveyId): array;
+
+    public function deleteSurvey(int $surveyId): bool;
 }
