@@ -75,11 +75,13 @@ class ProgramService
 
     private function addProgramLeader(ProgramBo $programBo, int $programId)
     {
-        $programMembersDao = new ProgramMembersDao();
-        $programMembersDao->setProgramId($programId);
-        $programMembersDao->setMemberIds($programBo->getLeaderId());
-        $programMembersDao->setRole(CommonConstants::PROGRAM_LEADER_ROLE);
+        foreach ($programBo->getLeaderIds() as $leaderId) {
+            $programMembersDao = new ProgramMembersDao();
+            $programMembersDao->setProgramId($programId);
+            $programMembersDao->setMemberIds($leaderId);
+            $programMembersDao->setRole(CommonConstants::PROGRAM_LEADER_ROLE);
 
-        $this->programMembersRepository->addProgramMembers($programMembersDao);
+            $this->programMembersRepository->addProgramMembers($programMembersDao);
+        }
     }
 }

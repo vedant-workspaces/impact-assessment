@@ -28,7 +28,7 @@ class ProgramController extends Controller
         $programBo->setDescription($data['description'] ?? null);
         $programBo->setStartDate($data['start_date'] ?? null);
         $programBo->setEndDate($data['end_date'] ?? null);
-        $programBo->setLeaderId($data['leader_id']);
+        $programBo->setLeaderIds($data['leader_ids']);
         $programBo->setMemberIds($data['member_ids']);
 
         return $this->programService->create($programBo);

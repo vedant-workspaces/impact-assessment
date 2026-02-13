@@ -44,12 +44,14 @@ class SurveyRepositoryImpl implements SurveyRepository
             ->get(['id', 'title', 'start_date', 'end_date', 'assigned_by', 'program_id']);
 
         return $surveys->map(function ($survey) {
+            $leaderIds = collect($survey->surveyMembers)->filter(function($sm){ return intval($sm->role) === 1; })->map(function($sm){ return $sm->member_id; })->values()->toArray();
             return [
                 'id' => $survey->id,
                 'title' => $survey->title,
                 'start_date' => $survey->start_date?->toDateString(),
                 'end_date' => $survey->end_date?->toDateString(),
                 'assigned_by' => $survey->assignedBy?->full_name ?? null,
+                'leader_ids' => $leaderIds,
                 'survey_completion' => 100,
                 'program_id' => $survey->program_id ?? null,
                 'members' => collect($survey->surveyMembers)->map(function ($sm) {

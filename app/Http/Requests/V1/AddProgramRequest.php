@@ -21,7 +21,8 @@ class AddProgramRequest extends FormRequest
             'start_date'  => 'nullable|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
 
-            'leader_id'   => 'required|integer|exists:members,id',
+            'leader_ids'   => 'required|array|min:1',
+            'leader_ids.*' => 'integer|exists:members,id',
             'member_ids'  => 'required|array|min:1',
             'member_ids.*'=> 'integer|exists:members,id',
         ];
@@ -40,7 +41,7 @@ class AddProgramRequest extends FormRequest
         'description',
         'start_date',
         'end_date',
-        'leader_id',
+        'leader_ids',
         'member_ids',
     ];
 
@@ -54,7 +55,9 @@ class AddProgramRequest extends FormRequest
             'end_date.required' => 'End date is required',
             'end_date.after_or_equal' => 'End date must be greater than or equal to start date',
 
-            'leader_id.required' => 'Leader ID is required',
+            'leader_ids.required' => 'Leader IDs is required',
+            'leader_ids.min' => 'Leader IDs must be greater than or equal to 1',
+            'leader_ids.*.integer' => 'Leader IDs must be integer',
             'member_ids.required' => 'Member IDs is required',
             'member_ids.min' => 'Member IDs must be greater than or equal to 1',
             'member_ids.*.integer' => 'Member IDs must be integer',

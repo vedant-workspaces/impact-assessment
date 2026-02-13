@@ -10,6 +10,7 @@ use App\Repositories\V1\SurveyRepository;
 use App\Services\Bo\V1\SurveyBo;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SurveyQuestion;
 
 class SurveyService
 {
@@ -26,6 +27,8 @@ class SurveyService
             $surveyId = $this->surveyRepository->createSurvey($surveyDao);
 
             $this->addSurveyMembers($surveyBo, $surveyId);
+
+            $this->addSurveyQuestions($surveyBo, $surveyId);
 
             return response()->json(['status' => 200, 'message' => 'Survey added successfully']);
         } catch (Exception) {
@@ -48,6 +51,7 @@ class SurveyService
         $surveyDao = new SurveyDao();
         $surveyDao->setNgoId(app('current_ngo_id') ?? 0);
         $surveyDao->setTitle($surveyBo->getTitle());
+        $surveyDao->setDescription($surveyBo->getDescription() ?? null);
         $surveyDao->setStartDate($surveyBo->getStartDate());
         $surveyDao->setEndDate($surveyBo->getEndDate());
         $surveyDao->setProgramId($surveyBo->getProgramId());
@@ -56,6 +60,30 @@ class SurveyService
         $surveyDao->setUpdatedAt(now());
 
         return $surveyDao;
+    }
+
+    private function addSurveyQuestions(SurveyBo $surveyBo, int $surveyId)
+    {
+        $questions = $surveyBo->getQuestions();
+        if (empty($questions) || !is_array($questions)) {
+            return;
+        }
+
+        foreach ($questions as $q) {
+            $options = $q['options'] ?? null;
+
+            SurveyQuestion::create([
+                'survey_id' => $surveyId,
+                'question_title' => $q['label'] ?? '',
+                'language' => 'english',
+                'options' => $options ?? null,
+                'is_required' => isset($q['required']) && ($q['required'] === true || $q['required'] == 1) ? 1 : 0,
+                'order' => $q['order'] ?? 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'is_deleted' => 0,
+            ]);
+        }
     }
 
     private function addSurveyMembers(SurveyBo $surveyBo, int $surveyId)
@@ -75,11 +103,13 @@ class SurveyService
 
     private function addSurveyLeader(SurveyBo $surveyBo, int $surveyId)
     {
-        $surveyMembersDao = new SurveyMembersDao();
-        $surveyMembersDao->setSurveyId($surveyId);
-        $surveyMembersDao->setMemberIds($surveyBo->getLeaderId());
-        $surveyMembersDao->setRole(CommonConstants::PROGRAM_LEADER_ROLE);
+        foreach ($surveyBo->getLeaderIds() as $leaderId) {
+            $surveyMembersDao = new SurveyMembersDao();
+            $surveyMembersDao->setSurveyId($surveyId);
+            $surveyMembersDao->setMemberIds($leaderId);
+            $surveyMembersDao->setRole(CommonConstants::PROGRAM_LEADER_ROLE);
 
-        $this->surveyMembersRepository->addSurveyMembers($surveyMembersDao);
+            $this->surveyMembersRepository->addSurveyMembers($surveyMembersDao);
+        }
     }
 }

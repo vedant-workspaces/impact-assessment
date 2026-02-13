@@ -10,11 +10,18 @@ class SurveyBo
 
     public string $endDate = '';
 
-    public int $leaderId = 0;
+    public array $leaderIds = [];
 
     public int $programId = 0;
 
     public array $memberIds = [];
+
+    public string $description = '';
+
+    /**
+     * Questions array expected in the format provided by the client
+     */
+    public array $questions = [];
 
     public function getTitle()
     {
@@ -52,14 +59,14 @@ class SurveyBo
         return $this;
     }
 
-    public function getLeaderId()
+    public function getLeaderIds()
     {
-        return $this->leaderId;
+        return $this->leaderIds;
     }
 
-    public function setLeaderId($leaderId)
+    public function setLeaderIds($leaderIds)
     {
-        $this->leaderId = $leaderId;
+        $this->leaderIds = $leaderIds;
 
         return $this;
     }
@@ -76,6 +83,18 @@ class SurveyBo
         return $this;
     }
 
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getMemberIds()
     {
         return $this->memberIds;
@@ -84,6 +103,18 @@ class SurveyBo
     public function setMemberIds($memberIds)
     {
         $this->memberIds = $memberIds;
+
+        return $this;
+    }
+
+    public function getQuestions()
+    {
+        return $this->questions;
+    }
+
+    public function setQuestions($questions)
+    {
+        $this->questions = $questions;
 
         return $this;
     }
