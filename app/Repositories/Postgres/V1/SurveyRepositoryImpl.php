@@ -41,6 +41,9 @@ class SurveyRepositoryImpl implements SurveyRepository
                 'assignedBy:id,full_name',
                 'surveyMembers.member:id,full_name'
             ])
+            ->withCount(['surveyQuestions' => function ($q) {
+                $q->where('is_deleted', 0);
+            }])
             ->get(['id', 'title', 'start_date', 'end_date', 'assigned_by', 'program_id']);
 
         return $surveys->map(function ($survey) {
@@ -54,6 +57,7 @@ class SurveyRepositoryImpl implements SurveyRepository
                 'leader_ids' => $leaderIds,
                 'survey_completion' => 100,
                 'program_id' => $survey->program_id ?? null,
+                'question_count' => $survey->survey_questions_count ?? 0,
                 'members' => collect($survey->surveyMembers)->map(function ($sm) {
                     $roleInt = intval($sm->role);
                     $roleLabel = $roleInt === 1 ? 'Leader' : ($roleInt === 2 ? 'Member' : null);
