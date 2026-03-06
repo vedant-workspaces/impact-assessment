@@ -51,6 +51,9 @@ Route::prefix('v1')->group(function () {
         Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
 
         Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
+
+        Route::get('programs/details', [ProgramController::class, 'getDetails']);
+        Route::post('programs/edit', [ProgramController::class, 'edit']);
     });
 
 });
