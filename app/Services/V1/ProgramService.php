@@ -43,6 +43,35 @@ class ProgramService
         return $this->programRepository->getProgramsWithMembers();
     }
 
+    public function edit(\App\Services\Bo\V1\ProgramBo $programBo, int $programId)
+    {
+        try {
+            $programDao = new \App\Repositories\Dao\V1\ProgramDao();
+            $programDao->setNgoId(app('current_ngo_id') ?? 0);
+            $programDao->setTitle($programBo->getTitle());
+            $programDao->setDescription($programBo->getDescription());
+            $programDao->setStartDate($programBo->getStartDate());
+            $programDao->setEndDate($programBo->getEndDate());
+            $programDao->setAssignedBy(\Illuminate\Support\Facades\Auth::id());
+            $programDao->setUpdatedAt(now());
+
+            $updated = $this->programRepository->updateProgram($programId, $programDao, $programBo->getLeaderIds(), $programBo->getMemberIds());
+
+            if (!$updated) {
+                return response()->json(['status' => 404, 'message' => 'Program not found or not editable']);
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Program updated successfully']);
+        } catch (Exception) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while updating program']);
+        }
+    }
+
+    public function getProgramDetailsData(int $programId): array
+    {
+        return $this->programRepository->getProgramDetails($programId);
+    }
+
     public function deleteProgramById(int $programId)
     {
         try {
