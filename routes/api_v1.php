@@ -40,6 +40,8 @@ Route::prefix('v1')->group(function () {
 
         Route::post('add-survey', [SurveyController::class, 'add']);
 
+        Route::post('surveys/edit', [SurveyController::class, 'edit']);
+
         Route::post('delete-survey', [SurveyController::class, 'deleteSurvey']);
 
         Route::get('surveys/names', [SurveyController::class, 'getSurveyNames']);

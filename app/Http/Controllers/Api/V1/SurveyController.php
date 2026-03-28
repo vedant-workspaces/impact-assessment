@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\AddSurveyRequest;
+use App\Http\Requests\V1\EditSurveyRequest;
 use Illuminate\Http\Request;
 use App\Services\Bo\V1\SurveyBo;
 use App\Services\V1\SurveyService;
@@ -33,6 +34,23 @@ class SurveyController extends Controller
         $surveyBo->setQuestions($data['questions'] ?? []);
 
         return $this->surveyService->create($surveyBo);
+    }
+
+    public function edit(EditSurveyRequest $editSurveyRequest): JsonResponse
+    {
+        $data = $editSurveyRequest->validated();
+
+        $surveyBo = new SurveyBo();
+        $surveyBo->setTitle($data['title']);
+        $surveyBo->setDescription($data['description'] ?? null);
+        $surveyBo->setStartDate($data['start_date'] ?? null);
+        $surveyBo->setEndDate($data['end_date'] ?? null);
+        $surveyBo->setProgramId($data['program_id']);
+        $surveyBo->setLeaderIds($data['leader_ids']);
+        $surveyBo->setMemberIds($data['member_ids']);
+        $surveyBo->setQuestions($data['questions'] ?? []);
+
+        return $this->surveyService->edit($surveyBo, (int) $data['survey_id']);
     }
 
     public function getSurveyNames(): JsonResponse

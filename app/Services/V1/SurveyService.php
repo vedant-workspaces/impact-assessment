@@ -51,6 +51,31 @@ class SurveyService
         return $this->surveyRepository->getSurveyDetails($surveyId);
     }
 
+    public function edit(SurveyBo $surveyBo, int $surveyId)
+    {
+        try {
+            $surveyDao = new \App\Repositories\Dao\V1\SurveyDao();
+            $surveyDao->setNgoId(app('current_ngo_id') ?? 0);
+            $surveyDao->setTitle($surveyBo->getTitle());
+            $surveyDao->setDescription($surveyBo->getDescription() ?? null);
+            $surveyDao->setStartDate($surveyBo->getStartDate());
+            $surveyDao->setEndDate($surveyBo->getEndDate());
+            $surveyDao->setAssignedBy(\Illuminate\Support\Facades\Auth::id());
+            $surveyDao->setUpdatedAt(now());
+
+            $updated = $this->surveyRepository->updateSurvey($surveyId, $surveyDao, $surveyBo->getLeaderIds(), $surveyBo->getMemberIds(), $surveyBo->getQuestions());
+
+            if (!$updated) {
+                return response()->json(['status' => 404, 'message' => 'Survey not found or not editable']);
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Survey updated successfully']);
+        } catch (Exception $e) {
+            dd($e->getMessage());
+            return response()->json(['status' => 400, 'message' => 'Error occurred while updating survey']);
+        }
+    }
+
     public function deleteSurveyById(int $surveyId)
     {
         try {
