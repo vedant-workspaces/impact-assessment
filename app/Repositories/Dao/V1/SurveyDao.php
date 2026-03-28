@@ -27,28 +27,28 @@ class SurveyDao
         if (isset($this->title)) {
             $collection['title'] = $this->title;
         }
-        if (isset($this->ngoId)) {
+        if (isset($this->ngoId) && intval($this->ngoId) > 0) {
             $collection['ngo_id'] = $this->ngoId;
         }
-        if (isset($this->startDate)) {
+        if (isset($this->startDate) && $this->startDate !== '') {
             $collection['start_date'] = $this->startDate;
         }
-        if (isset($this->endDate)) {
+        if (isset($this->endDate) && $this->endDate !== '') {
             $collection['end_date'] = $this->endDate;
         }
-        if (isset($this->description)) {
+        if (isset($this->description) && $this->description !== '') {
             $collection['description'] = $this->description;
         }
-        if (isset($this->programId)) {
+        if (isset($this->programId) && intval($this->programId) > 0) {
             $collection['program_id'] = $this->programId;
         }
-        if (isset($this->assignedBy)) {
+        if (isset($this->assignedBy) && intval($this->assignedBy) > 0) {
             $collection['assigned_by'] = $this->assignedBy;
         }
-        if (isset($this->createdAt)) {
+        if (isset($this->createdAt) && $this->createdAt !== '') {
             $collection['created_at'] = $this->createdAt;
         }
-        if (isset($this->updatedAt)) {
+        if (isset($this->updatedAt) && $this->updatedAt !== '') {
             $collection['updated_at'] = $this->updatedAt;
         }
 

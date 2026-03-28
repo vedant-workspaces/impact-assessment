@@ -14,5 +14,7 @@ interface SurveyRepository
 
     public function getSurveyDetails(int $surveyId): array;
 
+    public function updateSurvey(int $surveyId, \App\Repositories\Dao\V1\SurveyDao $surveyDao, array $leaderIds, array $memberIds, array $questions): bool;
+
     public function deleteSurvey(int $surveyId): bool;
 }

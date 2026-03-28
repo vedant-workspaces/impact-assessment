@@ -104,6 +104,90 @@ class SurveyRepositoryImpl implements SurveyRepository
         return $survey->save();
     }
 
+    public function updateSurvey(int $surveyId, \App\Repositories\Dao\V1\SurveyDao $surveyDao, array $leaderIds, array $memberIds, array $questions): bool
+    {
+        $ngoId = app('current_ngo_id') ?? 0;
+
+        $survey = \App\Models\Survey::where('id', $surveyId)
+            ->where('ngo_id', $ngoId)
+            ->where('is_deleted', 0)
+            ->first();
+
+        if (!$survey) {
+            return false;
+        }
+
+        $data = $surveyDao->toArray();
+        if (!empty($data)) {
+            foreach ($data as $k => $v) {
+                $survey->{$k} = $v;
+            }
+        }
+        $survey->updated_at = now();
+        $survey->save();
+
+        // Upsert survey members: update existing rows or create new ones.
+        $existingMembers = \App\Models\SurveyMember::where('survey_id', $surveyId)->get()->keyBy('member_id');
+
+        $incomingIds = array_values(array_unique(array_merge($leaderIds, $memberIds)));
+
+        // Process incoming IDs: create or reactivate/update role
+        foreach ($incomingIds as $mid) {
+            $isLeader = in_array($mid, $leaderIds, true);
+            $role = $isLeader ? 1 : 2;
+
+            if (isset($existingMembers[$mid])) {
+                $sm = $existingMembers[$mid];
+                $sm->role = $role;
+                $sm->is_deleted = 0;
+                $sm->updated_at = now();
+                $sm->save();
+            } else {
+                \App\Models\SurveyMember::create([
+                    'survey_id' => $surveyId,
+                    'member_id' => $mid,
+                    'role' => $role,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'is_deleted' => 0,
+                ]);
+            }
+        }
+
+        // Any existing members not present in incoming list should be soft-deleted
+        foreach ($existingMembers as $memberId => $sm) {
+            if (!in_array($memberId, $incomingIds, true) && intval($sm->is_deleted) === 0) {
+                $sm->is_deleted = 1;
+                $sm->updated_at = now();
+                $sm->save();
+            }
+        }
+
+        // Soft-delete existing survey questions
+        \App\Models\SurveyQuestion::where('survey_id', $surveyId)
+            ->where('is_deleted', 0)
+            ->update(['is_deleted' => 1, 'updated_at' => now()]);
+
+        // Re-create questions
+        foreach ($questions as $q) {
+            $options = $q['options'] ?? null;
+
+            \App\Models\SurveyQuestion::create([
+                'survey_id' => $surveyId,
+                'question_title' => $q['label'] ?? '',
+                'language' => 'english',
+                'options' => $options ?? null,
+                'is_required' => isset($q['required']) && ($q['required'] === true || $q['required'] == 1) ? 1 : 0,
+                'order' => $q['order'] ?? 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'is_deleted' => 0,
+            ]);
+        }
+
+        return true;
+    }
+
     public function getSurveyNames(): array
     {
         $ngoId = app('current_ngo_id') ?? 0;
