@@ -27,6 +27,13 @@ class Member extends Model
         'updated_at'
     ];
 
+    protected $casts = [
+        'role_type' => 'integer',
+        'access_level' => 'integer',
+        'ngo_id' => 'integer',
+        'status' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
