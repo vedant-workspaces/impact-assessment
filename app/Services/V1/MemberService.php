@@ -13,6 +13,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Constants\UserTypes;
 
 class MemberService
 {
@@ -32,6 +33,31 @@ class MemberService
             // Check if username already exists
             if (app(UserRepository::class)->findByUserName($memberBo->getUserName())) {
                 return response()->json(['status' => 409, 'message' => 'Username already exists']);
+            }
+
+            // Authorization: ensure the authenticated user can create the requested role
+            $authUser = Auth::user();
+            if (! $authUser) {
+                return response()->json(['status' => 403, 'message' => 'Authentication required']);
+            }
+
+            $creatorType = (int) ($authUser->user_type ?? 0);
+            $targetType = (int) $memberBo->getRoleType();
+
+            if ($creatorType === UserTypes::SUPER_ADMIN) {
+                // full permissions
+            } elseif ($creatorType === UserTypes::PROJECT_MANAGER) {
+                // Project Managers can only create Supervisors and Field Executives
+                if (! in_array($targetType, [UserTypes::SUPERVISOR, UserTypes::FIELD_EXECUTIVE], true)) {
+                    return response()->json(['status' => 403, 'message' => 'Project Managers can only create Supervisors and Field Executives']);
+                }
+            } elseif ($creatorType === UserTypes::SUPERVISOR) {
+                // Supervisors can only create Field Executives
+                if ($targetType !== UserTypes::FIELD_EXECUTIVE) {
+                    return response()->json(['status' => 403, 'message' => 'Supervisors can only create Field Executives']);
+                }
+            } else {
+                return response()->json(['status' => 403, 'message' => 'Insufficient privileges to create member']);
             }
     
             // STEP 2: Set register user dao
@@ -62,7 +88,8 @@ class MemberService
         $registerUserDao->setEmail($memberBo->getOfficialEmail());
         $registerUserDao->setUserName($memberBo->getUserName());
         $registerUserDao->setPassword($memberBo->getPassword());
-        $registerUserDao->setUserType(3);
+        // Use the selected role_type from the member payload as the user's user_type
+        $registerUserDao->setUserType($memberBo->getRoleType());
 
         // Associate member user with current NGO
         $registerUserDao->setNgoId(app('current_ngo_id') ?? 0);
