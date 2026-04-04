@@ -24,38 +24,42 @@ Route::prefix('v1')->group(function () {
 
     Route::post('auth/logout', [LoginController::class, 'logout']);
 
-    Route::middleware(['jwt', 'role:1'])->group(function () {
+    // Member creation: Super Admins, Project Managers, Supervisors
+    Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
         Route::post('add-members', [MemberController::class, 'add']);
     });
 
-    Route::middleware(['jwt', 'role:1'])->group(function () {
+    // Members listing: Super Admins and Project Managers
+    Route::middleware(['jwt', 'role:1,2'])->group(function () {
         Route::get('members', [MemberController::class, 'get']);
     });
 
-    // Route::middleware(['jwt', 'role:1'])->group(function () {
-    Route::middleware(['jwt'])->group(function () {
+    // Programs management (create/edit/delete): Super Admins and Project Managers
+    Route::middleware(['jwt', 'role:1,2'])->group(function () {
         Route::post('add-program', [ProgramController::class, 'add']);
-
         Route::post('delete-program', [ProgramController::class, 'deleteProgram']);
-
-        Route::post('add-survey', [SurveyController::class, 'add']);
-
-        Route::post('surveys/edit', [SurveyController::class, 'edit']);
-
-        Route::post('delete-survey', [SurveyController::class, 'deleteSurvey']);
-
-        Route::get('surveys/names', [SurveyController::class, 'getSurveyNames']);
-
-        Route::get('surveys', [SurveyController::class, 'getSurveysWithMembers']);
-
-        Route::get('surveys/details', [SurveyController::class, 'getDetails']);
-
-        Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
-
-        Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
-
-        Route::get('programs/details', [ProgramController::class, 'getDetails']);
         Route::post('programs/edit', [ProgramController::class, 'edit']);
+    });
+
+    // Programs view: Super Admins, Project Managers, Supervisors
+    Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
+        Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
+        Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
+        Route::get('programs/details', [ProgramController::class, 'getDetails']);
+    });
+
+    // Surveys: adding and viewing allowed for Super Admins, Project Managers, Supervisors
+    Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
+        Route::post('add-survey', [SurveyController::class, 'add']);
+        Route::get('surveys/names', [SurveyController::class, 'getSurveyNames']);
+        Route::get('surveys', [SurveyController::class, 'getSurveysWithMembers']);
+        Route::get('surveys/details', [SurveyController::class, 'getDetails']);
+    });
+
+    // Surveys management (edit/delete): Super Admins and Project Managers
+    Route::middleware(['jwt', 'role:1,2'])->group(function () {
+        Route::post('surveys/edit', [SurveyController::class, 'edit']);
+        Route::post('delete-survey', [SurveyController::class, 'deleteSurvey']);
     });
 
 });
