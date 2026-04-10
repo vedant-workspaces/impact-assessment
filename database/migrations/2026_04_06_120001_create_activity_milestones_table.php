@@ -12,8 +12,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('activity_id');
             $table->unsignedBigInteger('ngo_id')->default(0);
             $table->string('name');
-            $table->unsignedInteger('total_duration')->default(0)->comment('duration in days');
-            $table->unsignedInteger('duration_taken')->default(0)->comment('duration taken in days');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
             $table->integer('is_deleted')->default(0);
 

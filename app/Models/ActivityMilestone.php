@@ -12,16 +12,16 @@ class ActivityMilestone extends Model
         'name',
         'activity_id',
         'ngo_id',
-        'total_duration',
-        'duration_taken',
+        'start_date',
+        'end_date',
         'created_at',
         'updated_at',
         'is_deleted',
     ];
 
     protected $casts = [
-        'total_duration' => 'integer',
-        'duration_taken' => 'integer',
+        'start_date' => 'date',
+        'end_date' => 'date',
         'is_deleted' => 'integer',
     ];
 

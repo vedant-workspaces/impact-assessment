@@ -10,9 +10,9 @@ class ActivityMilestoneDao
 
     public string $name = '';
 
-    public int $totalDuration = 0;
+    public string $startDate = '';
 
-    public int $durationTaken = 0;
+    public string $endDate = '';
 
     public string $createdAt = '';
 
@@ -30,11 +30,11 @@ class ActivityMilestoneDao
         if (isset($this->name) && $this->name !== '') {
             $collection['name'] = $this->name;
         }
-        if (isset($this->totalDuration)) {
-            $collection['total_duration'] = $this->totalDuration;
+        if (isset($this->startDate) && $this->startDate !== '') {
+            $collection['start_date'] = $this->startDate;
         }
-        if (isset($this->durationTaken)) {
-            $collection['duration_taken'] = $this->durationTaken;
+        if (isset($this->endDate) && $this->endDate !== '') {
+            $collection['end_date'] = $this->endDate;
         }
         if (isset($this->createdAt)) {
             $collection['created_at'] = $this->createdAt;
@@ -67,16 +67,16 @@ class ActivityMilestoneDao
         return $this;
     }
 
-    public function setTotalDuration($d)
+    public function setStartDate($d)
     {
-        $this->totalDuration = $d;
+        $this->startDate = $d;
 
         return $this;
     }
 
-    public function setDurationTaken($d)
+    public function setEndDate($d)
     {
-        $this->durationTaken = $d;
+        $this->endDate = $d;
 
         return $this;
     }

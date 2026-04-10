@@ -91,8 +91,8 @@ class ActivityService
             $dao->setActivityId($activityId);
             $dao->setNgoId(app('current_ngo_id') ?? 0);
             $dao->setName($m['name'] ?? '');
-            $dao->setTotalDuration($m['total_duration'] ?? 0);
-            $dao->setDurationTaken($m['duration_taken'] ?? 0);
+            $dao->setStartDate($m['start_date'] ?? null);
+            $dao->setEndDate($m['end_date'] ?? null);
             $dao->setCreatedAt(now());
             $dao->setUpdatedAt(now());
 
