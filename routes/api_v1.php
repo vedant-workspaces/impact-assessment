@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\NgoController;
 use App\Http\Controllers\Api\V1\ProgramController;
 use App\Http\Controllers\Api\V1\SdgsController;
 use App\Http\Controllers\Api\V1\SurveyController;
+use App\Http\Controllers\Api\V1\ActivityController;
 use Illuminate\Support\Facades\Route;
 
 // routing for API v1
@@ -51,6 +52,7 @@ Route::prefix('v1')->group(function () {
     // Surveys: adding and viewing allowed for Super Admins, Project Managers, Supervisors
     Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
         Route::post('add-survey', [SurveyController::class, 'add']);
+        Route::post('add-activity', [ActivityController::class, 'add']);
         Route::get('surveys/names', [SurveyController::class, 'getSurveyNames']);
         Route::get('surveys', [SurveyController::class, 'getSurveysWithMembers']);
         Route::get('surveys/details', [SurveyController::class, 'getDetails']);
