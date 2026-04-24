@@ -58,9 +58,8 @@ class ProgramService
             $programDao->setStartDate($programBo->getStartDate());
             $programDao->setEndDate($programBo->getEndDate());
             // Map authenticated user to `members.id` (assigned_by references members)
-            $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            $member = \App\Models\User::where('id', \Illuminate\Support\Facades\Auth::id())
                 ->where('status', 1)
-                ->where('ngo_id', app('current_ngo_id') ?? 0)
                 ->first();
 
             if (!$member) {
@@ -111,9 +110,8 @@ class ProgramService
         $programDao->setStartDate($programBo->getStartDate());
         $programDao->setEndDate($programBo->getEndDate());
         // Map authenticated user to `members.id` (assigned_by references members)
-        $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+        $member = \App\Models\User::where('id', \Illuminate\Support\Facades\Auth::id())
             ->where('status', 1)
-            ->where('ngo_id', app('current_ngo_id') ?? 0)
             ->first();
 
         if ($member) {
