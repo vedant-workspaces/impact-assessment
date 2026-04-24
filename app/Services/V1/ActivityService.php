@@ -48,7 +48,7 @@ class ActivityService
         $activityDao->setDescription($activityBo->getDescription() ?? null);
         // Map authenticated user to `members.id` (assigned_by references members). Activities allow null assigned_by.
         $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
-            ->where('is_deleted', 0)
+            ->where('status', 1)
             ->where('ngo_id', app('current_ngo_id') ?? 0)
             ->first();
 
