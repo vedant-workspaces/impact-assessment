@@ -22,11 +22,15 @@ class ProgramService
     {
         try {
             $programDao = $this->setProgramDao($programBo);
-    
+
+            if (empty($programDao->getAssignedBy()) || intval($programDao->getAssignedBy()) <= 0) {
+                return response()->json(['status' => 400, 'message' => 'Current user is not registered as a member. Please create a member profile before creating a program.']);
+            }
+
             $programId = $this->programRepository->createProgram($programDao);
-    
+
             $this->addProgramMembers($programBo, $programId);
-    
+
             return response()->json(['status' => 200, 'message' => 'Program added successfully']);
         } catch (Exception) {
             return response()->json(['status' => 400, 'message' => 'Error occurred while adding program']);
@@ -52,7 +56,17 @@ class ProgramService
             $programDao->setDescription($programBo->getDescription());
             $programDao->setStartDate($programBo->getStartDate());
             $programDao->setEndDate($programBo->getEndDate());
-            $programDao->setAssignedBy(\Illuminate\Support\Facades\Auth::id());
+            // Map authenticated user to `members.id` (assigned_by references members)
+            $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->where('is_deleted', 0)
+                ->where('ngo_id', app('current_ngo_id') ?? 0)
+                ->first();
+
+            if (!$member) {
+                return response()->json(['status' => 400, 'message' => 'Current user is not registered as a member. Please create a member profile before editing a program.']);
+            }
+
+            $programDao->setAssignedBy($member->id);
             $programDao->setUpdatedAt(now());
 
             $updated = $this->programRepository->updateProgram($programId, $programDao, $programBo->getLeaderIds(), $programBo->getMemberIds());
@@ -95,7 +109,15 @@ class ProgramService
         $programDao->setDescription($programBo->getDescription());
         $programDao->setStartDate($programBo->getStartDate());
         $programDao->setEndDate($programBo->getEndDate());
-        $programDao->setAssignedBy(Auth::id());
+        // Map authenticated user to `members.id` (assigned_by references members)
+        $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('is_deleted', 0)
+            ->where('ngo_id', app('current_ngo_id') ?? 0)
+            ->first();
+
+        if ($member) {
+            $programDao->setAssignedBy($member->id);
+        }
         $programDao->setCreatedAt(now());
         $programDao->setUpdatedAt(now());
 

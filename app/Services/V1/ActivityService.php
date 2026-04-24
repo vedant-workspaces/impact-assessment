@@ -46,7 +46,15 @@ class ActivityService
         $activityDao->setProgramId($activityBo->getProgramId() ?? 0);
         $activityDao->setName($activityBo->getName());
         $activityDao->setDescription($activityBo->getDescription() ?? null);
-        $activityDao->setAssignedBy(Auth::id());
+        // Map authenticated user to `members.id` (assigned_by references members). Activities allow null assigned_by.
+        $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('is_deleted', 0)
+            ->where('ngo_id', app('current_ngo_id') ?? 0)
+            ->first();
+
+        if ($member) {
+            $activityDao->setAssignedBy($member->id);
+        }
         $activityDao->setTotalBudget($activityBo->getTotalBudget() ?? 0);
         $activityDao->setTotalBeneficiaries($activityBo->getTotalBeneficiaries() ?? 0);
         $activityDao->setIsMediaUploads($activityBo->getIsMediaUploads() ?? 0);
