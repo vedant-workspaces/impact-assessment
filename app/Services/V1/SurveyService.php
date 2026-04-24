@@ -24,6 +24,10 @@ class SurveyService
         try {
             $surveyDao = $this->setSurveyDao($surveyBo);
 
+            if (empty($surveyDao->getAssignedBy()) || intval($surveyDao->getAssignedBy()) <= 0) {
+                return response()->json(['status' => 400, 'message' => 'Current user is not registered as a member. Please create a member profile before creating a survey.']);
+            }
+
             $surveyId = $this->surveyRepository->createSurvey($surveyDao);
 
             $this->addSurveyMembers($surveyBo, $surveyId);
@@ -60,7 +64,17 @@ class SurveyService
             $surveyDao->setDescription($surveyBo->getDescription() ?? null);
             $surveyDao->setStartDate($surveyBo->getStartDate());
             $surveyDao->setEndDate($surveyBo->getEndDate());
-            $surveyDao->setAssignedBy(\Illuminate\Support\Facades\Auth::id());
+            // Map authenticated user to `members.id` (assigned_by references members)
+            $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                ->where('is_deleted', 0)
+                ->where('ngo_id', app('current_ngo_id') ?? 0)
+                ->first();
+
+            if (!$member) {
+                return response()->json(['status' => 400, 'message' => 'Current user is not registered as a member. Please create a member profile before updating a survey.']);
+            }
+
+            $surveyDao->setAssignedBy($member->id);
             $surveyDao->setUpdatedAt(now());
 
             $updated = $this->surveyRepository->updateSurvey($surveyId, $surveyDao, $surveyBo->getLeaderIds(), $surveyBo->getMemberIds(), $surveyBo->getQuestions());
@@ -100,7 +114,15 @@ class SurveyService
         $surveyDao->setStartDate($surveyBo->getStartDate());
         $surveyDao->setEndDate($surveyBo->getEndDate());
         $surveyDao->setProgramId($surveyBo->getProgramId());
-        $surveyDao->setAssignedBy(Auth::id());
+        // Map authenticated user to `members.id` (assigned_by references members)
+        $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('is_deleted', 0)
+            ->where('ngo_id', app('current_ngo_id') ?? 0)
+            ->first();
+
+        if ($member) {
+            $surveyDao->setAssignedBy($member->id);
+        }
         $surveyDao->setCreatedAt(now());
         $surveyDao->setUpdatedAt(now());
 
