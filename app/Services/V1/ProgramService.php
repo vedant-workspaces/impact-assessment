@@ -28,8 +28,9 @@ class ProgramService
             $this->addProgramMembers($programBo, $programId);
     
             return response()->json(['status' => 200, 'message' => 'Program added successfully']);
-        } catch (Exception) {
-            return response()->json(['status' => 400, 'message' => 'Error occurred while adding program']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 400, 'message' => $e->getMessage()]);
+            // return response()->json(['status' => 400, 'message' => 'Error occurred while adding program']);
         }
     }
 
