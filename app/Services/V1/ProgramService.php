@@ -32,8 +32,9 @@ class ProgramService
             $this->addProgramMembers($programBo, $programId);
 
             return response()->json(['status' => 200, 'message' => 'Program added successfully']);
-        } catch (Exception) {
-            return response()->json(['status' => 400, 'message' => 'Error occurred while adding program']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 400, 'message' => $e->getMessage()]);
+            // return response()->json(['status' => 400, 'message' => 'Error occurred while adding program']);
         }
     }
 
@@ -58,7 +59,7 @@ class ProgramService
             $programDao->setEndDate($programBo->getEndDate());
             // Map authenticated user to `members.id` (assigned_by references members)
             $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
-                ->where('is_deleted', 0)
+                ->where('status', 1)
                 ->where('ngo_id', app('current_ngo_id') ?? 0)
                 ->first();
 
@@ -111,7 +112,7 @@ class ProgramService
         $programDao->setEndDate($programBo->getEndDate());
         // Map authenticated user to `members.id` (assigned_by references members)
         $member = \App\Models\Member::where('user_id', \Illuminate\Support\Facades\Auth::id())
-            ->where('is_deleted', 0)
+            ->where('status', 1)
             ->where('ngo_id', app('current_ngo_id') ?? 0)
             ->first();
 
