@@ -59,7 +59,6 @@ class ProgramService
             $programDao->setEndDate($programBo->getEndDate());
             // Map authenticated user to `members.id` (assigned_by references members)
             $member = \App\Models\User::where('id', \Illuminate\Support\Facades\Auth::id())
-                ->where('status', 1)
                 ->first();
 
             if (!$member) {
@@ -111,7 +110,6 @@ class ProgramService
         $programDao->setEndDate($programBo->getEndDate());
         // Map authenticated user to `members.id` (assigned_by references members)
         $member = \App\Models\User::where('id', \Illuminate\Support\Facades\Auth::id())
-            ->where('status', 1)
             ->first();
 
         if ($member) {

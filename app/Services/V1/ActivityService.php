@@ -39,6 +39,21 @@ class ActivityService
         }
     }
 
+    public function getActivityNamesData(): array
+    {
+        return $this->activityRepository->getActivityNames();
+    }
+
+    public function getActivitiesWithMembersData(?int $programId = null): array
+    {
+        return $this->activityRepository->getActivitiesWithMembers($programId);
+    }
+
+    public function getActivityDetailsData(int $activityId): array
+    {
+        return $this->activityRepository->getActivityDetails($activityId);
+    }
+
     private function setActivityDao(ActivityBo $activityBo): ActivityDao
     {
         $activityDao = new ActivityDao();
@@ -58,6 +73,9 @@ class ActivityService
         $activityDao->setTotalBudget($activityBo->getTotalBudget() ?? 0);
         $activityDao->setTotalBeneficiaries($activityBo->getTotalBeneficiaries() ?? 0);
         $activityDao->setIsMediaUploads($activityBo->getIsMediaUploads() ?? 0);
+        // default media status pending (2) and no media link on creation
+        $activityDao->setMediaStatus(2);
+        $activityDao->setMediaLink(null);
         $activityDao->setStartDate($activityBo->getStartDate() ?? null);
         $activityDao->setEndDate($activityBo->getEndDate() ?? null);
         $activityDao->setCreatedAt(now());

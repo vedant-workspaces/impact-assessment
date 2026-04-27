@@ -66,7 +66,6 @@ class SurveyService
             $surveyDao->setEndDate($surveyBo->getEndDate());
             // Map authenticated user to `members.id` (assigned_by references members)
             $member = \App\Models\User::where('id', \Illuminate\Support\Facades\Auth::id())
-                ->where('status', 1)
                 ->first();
 
             if (!$member) {
@@ -115,7 +114,6 @@ class SurveyService
         $surveyDao->setProgramId($surveyBo->getProgramId());
         // Map authenticated user to `members.id` (assigned_by references members)
         $member = \App\Models\User::where('id', \Illuminate\Support\Facades\Auth::id())
-            ->where('status', 1)
             ->first();
 
         if ($member) {

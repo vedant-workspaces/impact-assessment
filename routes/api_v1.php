@@ -64,4 +64,11 @@ Route::prefix('v1')->group(function () {
         Route::post('delete-survey', [SurveyController::class, 'deleteSurvey']);
     });
 
+    // Activities viewing: any authenticated user can view activities
+    Route::middleware(['jwt'])->group(function () {
+        Route::get('activities/names', [ActivityController::class, 'getActivityNames']);
+        Route::get('activities', [ActivityController::class, 'getActivitiesWithMembers']);
+        Route::get('activities/details', [ActivityController::class, 'getDetails']);
+    });
+
 });

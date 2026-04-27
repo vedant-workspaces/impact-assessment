@@ -10,9 +10,9 @@ class ActivityMembersDao
 
     public int $role = 0;
 
-    public string $createdAt = '';
+    public ?string $createdAt = null;
 
-    public string $updatedAt = '';
+    public ?string $updatedAt = null;
 
     public function toArray()
     {
@@ -59,14 +59,26 @@ class ActivityMembersDao
 
     public function setCreatedAt($d)
     {
-        $this->createdAt = $d;
+        if ($d === null) {
+            $this->createdAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->createdAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->createdAt = (string) $d;
+        }
 
         return $this;
     }
 
     public function setUpdatedAt($d)
     {
-        $this->updatedAt = $d;
+        if ($d === null) {
+            $this->updatedAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->updatedAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->updatedAt = (string) $d;
+        }
 
         return $this;
     }
