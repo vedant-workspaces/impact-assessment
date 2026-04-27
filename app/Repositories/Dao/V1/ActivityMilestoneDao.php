@@ -10,13 +10,13 @@ class ActivityMilestoneDao
 
     public string $name = '';
 
-    public string $startDate = '';
+    public ?string $startDate = null;
 
-    public string $endDate = '';
+    public ?string $endDate = null;
 
-    public string $createdAt = '';
+    public ?string $createdAt = null;
 
-    public string $updatedAt = '';
+    public ?string $updatedAt = null;
 
     public function toArray()
     {
@@ -69,28 +69,52 @@ class ActivityMilestoneDao
 
     public function setStartDate($d)
     {
-        $this->startDate = $d;
+        if ($d === null) {
+            $this->startDate = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->startDate = $d->format('Y-m-d');
+        } else {
+            $this->startDate = (string) $d;
+        }
 
         return $this;
     }
 
     public function setEndDate($d)
     {
-        $this->endDate = $d;
+        if ($d === null) {
+            $this->endDate = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->endDate = $d->format('Y-m-d');
+        } else {
+            $this->endDate = (string) $d;
+        }
 
         return $this;
     }
 
     public function setCreatedAt($d)
     {
-        $this->createdAt = $d;
+        if ($d === null) {
+            $this->createdAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->createdAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->createdAt = (string) $d;
+        }
 
         return $this;
     }
 
     public function setUpdatedAt($d)
     {
-        $this->updatedAt = $d;
+        if ($d === null) {
+            $this->updatedAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->updatedAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->updatedAt = (string) $d;
+        }
 
         return $this;
     }

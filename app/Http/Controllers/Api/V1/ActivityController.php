@@ -37,4 +37,56 @@ class ActivityController extends Controller
 
         return $this->activityService->create($activityBo);
     }
+
+    public function getActivityNames(): JsonResponse
+    {
+        try {
+            $data = $this->activityService->getActivityNamesData();
+
+            return $this->success($data, "Activities retrieved successfully");
+        } catch (\Exception) {
+            return $this->error("Failed to retrieve activities");
+        }
+    }
+
+    public function getActivitiesWithMembers(Request $request): JsonResponse
+    {
+        try {
+            // Accept nullable program_id: if null -> standalone activities, otherwise filter by program id
+            $programId = $request->has('program_id') ? $request->input('program_id') : null;
+
+            if (!is_null($programId) && $programId !== '' && !is_numeric($programId)) {
+                return $this->error('program_id must be an integer or null', 422);
+            }
+
+            $programParam = is_null($programId) || $programId === '' ? null : (int) $programId;
+
+            $data = $this->activityService->getActivitiesWithMembersData($programParam);
+
+            return $this->success($data, "Activities with members retrieved successfully");
+        } catch (\Exception) {
+            return $this->error("Failed to retrieve activities with members");
+        }
+    }
+
+    public function getDetails(Request $request): JsonResponse
+    {
+        try {
+            $activityId = $request->input('activity_id');
+
+            if (is_null($activityId) || $activityId === '') {
+                return $this->error('activity_id is required', 422);
+            }
+
+            if (!is_numeric($activityId)) {
+                return $this->error('activity_id must be an integer', 422);
+            }
+
+            $data = $this->activityService->getActivityDetailsData((int) $activityId);
+
+            return $this->success($data, 'Activity details retrieved successfully');
+        } catch (\Exception) {
+            return $this->error('Failed to retrieve activity details');
+        }
+    }
 }

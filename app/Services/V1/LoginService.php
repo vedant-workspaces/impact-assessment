@@ -34,6 +34,7 @@ class LoginService
                 'id' => $user->id,
                 'email' => $user->email,
                 'user_type' => $user->user_type,
+                'role' => $user->user_type,
             ]
         ];
     }

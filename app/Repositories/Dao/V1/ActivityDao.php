@@ -10,7 +10,7 @@ class ActivityDao
 
     public string $name = '';
 
-    public string $description = '';
+    public ?string $description = null;
 
     public int $assignedBy = 0;
 
@@ -24,13 +24,17 @@ class ActivityDao
 
     public int $isMediaUploads = 0;
 
-    public string $startDate = '';
+    public int $mediaStatus = 2;
 
-    public string $endDate = '';
+    public ?string $mediaLink = null;
 
-    public string $createdAt = '';
+    public ?string $startDate = null;
 
-    public string $updatedAt = '';
+    public ?string $endDate = null;
+
+    public ?string $createdAt = null;
+
+    public ?string $updatedAt = null;
 
     public function toArray()
     {
@@ -64,6 +68,12 @@ class ActivityDao
         }
         if (isset($this->isMediaUploads)) {
             $collection['is_media_uploads'] = $this->isMediaUploads;
+        }
+        if (isset($this->mediaStatus)) {
+            $collection['media_status'] = $this->mediaStatus;
+        }
+        if (isset($this->mediaLink) && $this->mediaLink !== '') {
+            $collection['media_link'] = $this->mediaLink;
         }
         if (isset($this->startDate) && $this->startDate !== '') {
             $collection['start_date'] = $this->startDate;
@@ -104,7 +114,7 @@ class ActivityDao
 
     public function setDescription($description)
     {
-        $this->description = $description;
+        $this->description = $description === null ? null : (string) $description;
 
         return $this;
     }
@@ -137,30 +147,68 @@ class ActivityDao
         return $this;
     }
 
+    public function setMediaStatus($s)
+    {
+        $this->mediaStatus = $s;
+
+        return $this;
+    }
+
+    public function setMediaLink($l)
+    {
+        $this->mediaLink = $l === null ? null : (string) $l;
+
+        return $this;
+    }
+
     public function setStartDate($d)
     {
-        $this->startDate = $d;
+        if ($d === null) {
+            $this->startDate = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->startDate = $d->format('Y-m-d');
+        } else {
+            $this->startDate = (string) $d;
+        }
 
         return $this;
     }
 
     public function setEndDate($d)
     {
-        $this->endDate = $d;
+        if ($d === null) {
+            $this->endDate = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->endDate = $d->format('Y-m-d');
+        } else {
+            $this->endDate = (string) $d;
+        }
 
         return $this;
     }
 
     public function setCreatedAt($d)
     {
-        $this->createdAt = $d;
+        if ($d === null) {
+            $this->createdAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->createdAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->createdAt = (string) $d;
+        }
 
         return $this;
     }
 
     public function setUpdatedAt($d)
     {
-        $this->updatedAt = $d;
+        if ($d === null) {
+            $this->updatedAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->updatedAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->updatedAt = (string) $d;
+        }
 
         return $this;
     }
