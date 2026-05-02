@@ -68,6 +68,11 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['jwt'])->group(function () {
         Route::get('activities/names', [ActivityController::class, 'getActivityNames']);
         Route::get('activities', [ActivityController::class, 'getActivitiesWithMembers']);
+        // Update activity params and milestone status (Project Managers / Super Admins)
+        Route::middleware(['role:1,2,3'])->group(function () {
+            Route::post('activities/update', [ActivityController::class, 'updateParams']);
+            Route::post('activities/milestone/complete', [ActivityController::class, 'markMilestoneComplete']);
+        });
         Route::get('activities/details', [ActivityController::class, 'getDetails']);
     });
 

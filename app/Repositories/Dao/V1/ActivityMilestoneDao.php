@@ -14,6 +14,8 @@ class ActivityMilestoneDao
 
     public ?string $endDate = null;
 
+    public int $milestoneStatus = 0;
+
     public ?string $createdAt = null;
 
     public ?string $updatedAt = null;
@@ -35,6 +37,9 @@ class ActivityMilestoneDao
         }
         if (isset($this->endDate) && $this->endDate !== '') {
             $collection['end_date'] = $this->endDate;
+        }
+        if (isset($this->milestoneStatus)) {
+            $collection['milestone_status'] = $this->milestoneStatus;
         }
         if (isset($this->createdAt)) {
             $collection['created_at'] = $this->createdAt;
@@ -89,6 +94,13 @@ class ActivityMilestoneDao
         } else {
             $this->endDate = (string) $d;
         }
+
+        return $this;
+    }
+
+    public function setMilestoneStatus($s)
+    {
+        $this->milestoneStatus = intval($s);
 
         return $this;
     }

@@ -19,4 +19,24 @@ class ActivityMilestonesRepositoryImpl implements ActivityMilestonesRepository
 
         return true;
     }
+
+    public function updateMilestoneStatus(int $milestoneId, int $status): bool
+    {
+        $ngoId = app('current_ngo_id') ?? 0;
+
+        $ms = ActivityMilestone::where('id', $milestoneId)
+            ->where('ngo_id', $ngoId)
+            ->where('is_deleted', 0)
+            ->first();
+
+        if (!$ms) {
+            return false;
+        }
+
+        $ms->milestone_status = intval($status);
+        $ms->updated_at = Carbon::now()->format('Y-m-d H:i:s');
+        $ms->save();
+
+        return true;
+    }
 }

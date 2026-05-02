@@ -14,6 +14,7 @@ class ActivityMilestone extends Model
         'ngo_id',
         'start_date',
         'end_date',
+        'milestone_status',
         'created_at',
         'updated_at',
         'is_deleted',
@@ -23,6 +24,7 @@ class ActivityMilestone extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'is_deleted' => 'integer',
+        'milestone_status' => 'integer',
     ];
 
     public function activity()

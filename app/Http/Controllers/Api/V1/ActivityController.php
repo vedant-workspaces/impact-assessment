@@ -89,4 +89,43 @@ class ActivityController extends Controller
             return $this->error('Failed to retrieve activity details');
         }
     }
+
+    public function updateParams(\App\Http\Requests\V1\UpdateActivityParamsRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+
+            $activityId = (int) ($data['activity_id'] ?? 0);
+
+            $params = [];
+            if (array_key_exists('budget_used', $data)) {
+                $params['budget_used'] = $data['budget_used'];
+            }
+            if (array_key_exists('beneficiaries_reached', $data)) {
+                $params['beneficiaries_reached'] = $data['beneficiaries_reached'];
+            }
+            if (array_key_exists('media_status', $data)) {
+                $params['media_status'] = $data['media_status'];
+            }
+            if (array_key_exists('media_link', $data)) {
+                $params['media_link'] = $data['media_link'];
+            }
+
+            return $this->activityService->updateActivityParams($activityId, $params);
+        } catch (\Exception) {
+            return $this->error('Failed to update activity');
+        }
+    }
+
+    public function markMilestoneComplete(\App\Http\Requests\V1\MarkMilestoneRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            $milestoneId = (int) ($data['milestone_id'] ?? 0);
+
+            return $this->activityService->markMilestoneCompleted($milestoneId);
+        } catch (\Exception) {
+            return $this->error('Failed to update milestone status');
+        }
+    }
 }

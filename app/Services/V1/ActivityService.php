@@ -44,6 +44,36 @@ class ActivityService
         return $this->activityRepository->getActivityNames();
     }
 
+    public function updateActivityParams(int $activityId, array $params)
+    {
+        try {
+            $updated = $this->activityRepository->updateActivityParams($activityId, $params);
+
+            if (!$updated) {
+                return response()->json(['status' => 404, 'message' => 'Activity not found']);
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Activity updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while updating activity']);
+        }
+    }
+
+    public function markMilestoneCompleted(int $milestoneId)
+    {
+        try {
+            $updated = $this->activityMilestonesRepository->updateMilestoneStatus($milestoneId, 2);
+
+            if (!$updated) {
+                return response()->json(['status' => 404, 'message' => 'Milestone not found']);
+            }
+
+            return response()->json(['status' => 200, 'message' => 'Milestone marked completed']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 400, 'message' => 'Error occurred while updating milestone status']);
+        }
+    }
+
     public function getActivitiesWithMembersData(?int $programId = null): array
     {
         return $this->activityRepository->getActivitiesWithMembers($programId);
