@@ -15,4 +15,6 @@ interface ActivityRepository
     public function getActivityDetails(int $activityId): array;
 
     public function updateActivityParams(int $activityId, array $params): bool;
+
+    public function getActivitiesForProgram(?int $programId = null): array;
 }

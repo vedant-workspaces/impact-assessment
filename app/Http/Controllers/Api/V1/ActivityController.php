@@ -128,4 +128,22 @@ class ActivityController extends Controller
             return $this->error('Failed to update milestone status');
         }
     }
+
+    public function impactScore(\App\Http\Requests\V1\ActivityImpactRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            $activityId = (int) ($data['activity_id'] ?? 0);
+
+            $result = $this->activityService->calculateActivityImpactData($activityId);
+
+            if (empty($result)) {
+                return $this->error('Activity not found', 404);
+            }
+
+            return $this->success($result, 'Activity impact score calculated');
+        } catch (\Exception) {
+            return $this->error('Failed to calculate activity impact');
+        }
+    }
 }

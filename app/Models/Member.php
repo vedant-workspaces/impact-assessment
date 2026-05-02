@@ -19,7 +19,6 @@ class Member extends Model
         'department',
         'contact_number',
         'official_email',
-        'role_type',
         'access_level',
         'status',
         'assigned_by',
@@ -28,7 +27,6 @@ class Member extends Model
     ];
 
     protected $casts = [
-        'role_type' => 'integer',
         'access_level' => 'integer',
         'ngo_id' => 'integer',
         'status' => 'integer',

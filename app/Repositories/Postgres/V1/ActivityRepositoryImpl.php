@@ -160,6 +160,7 @@ class ActivityRepositoryImpl implements ActivityRepository
                 'start_date' => $m->start_date?->toDateString(),
                 'end_date' => $m->end_date?->toDateString(),
                 'status' => intval($m->milestone_status ?? 0),
+                'completed_at' => $m->completed_at?->toDateTimeString(),
             ];
         })->values()->toArray();
 
@@ -209,5 +210,56 @@ class ActivityRepositoryImpl implements ActivityRepository
         $activity->save();
 
         return true;
+    }
+
+    public function getActivitiesForProgram(?int $programId = null): array
+    {
+        $ngoId = app('current_ngo_id') ?? 0;
+
+        $query = Activity::where('is_deleted', 0)
+            ->where('ngo_id', $ngoId)
+            ->with(['milestones' => function ($q) {
+                $q->where('is_deleted', 0)->orderBy('start_date');
+            }]);
+
+        if (is_null($programId) || intval($programId) === 0) {
+            $query->where(function ($q) {
+                $q->whereNull('program_id')->orWhere('program_id', 0);
+            });
+        } else {
+            $query->where('program_id', $programId);
+        }
+
+        $activities = $query->get(['id', 'name', 'start_date', 'end_date', 'assigned_by', 'program_id', 'total_budget', 'budget_used', 'total_beneficiaries', 'beneficiaries_reached', 'is_media_uploads', 'media_status', 'media_link']);
+
+        return $activities->map(function ($activity) {
+            $milestones = collect($activity->milestones)->map(function ($m) {
+                return [
+                    'id' => $m->id,
+                    'name' => $m->name,
+                    'start_date' => $m->start_date?->toDateString(),
+                    'end_date' => $m->end_date?->toDateString(),
+                    'status' => intval($m->milestone_status ?? 0),
+                    'completed_at' => $m->completed_at?->toDateTimeString(),
+                ];
+            })->values()->toArray();
+
+            return [
+                'id' => $activity->id,
+                'name' => $activity->name,
+                'start_date' => $activity->start_date?->toDateString(),
+                'end_date' => $activity->end_date?->toDateString(),
+                'program_id' => $activity->program_id ?? null,
+                'total_budget' => floatval($activity->total_budget ?? 0),
+                'budget_used' => floatval($activity->budget_used ?? 0),
+                'total_beneficiaries' => intval($activity->total_beneficiaries ?? 0),
+                'beneficiaries_reached' => intval($activity->beneficiaries_reached ?? 0),
+                'is_media_uploads' => intval($activity->is_media_uploads ?? 0),
+                'media_status' => intval($activity->media_status ?? 2),
+                'media_link' => $activity->media_link ?? null,
+                'milestones' => $milestones,
+                'milestone_count' => count($milestones),
+            ];
+        })->toArray();
     }
 }
