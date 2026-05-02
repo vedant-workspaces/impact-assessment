@@ -159,6 +159,7 @@ class ActivityRepositoryImpl implements ActivityRepository
                 'name' => $m->name,
                 'start_date' => $m->start_date?->toDateString(),
                 'end_date' => $m->end_date?->toDateString(),
+                'status' => intval($m->milestone_status ?? 0),
             ];
         })->values()->toArray();
 
@@ -182,5 +183,31 @@ class ActivityRepositoryImpl implements ActivityRepository
             'media_status' => intval($activity->media_status ?? 2),
             'media_link' => $activity->media_link ?? null,
         ];
+    }
+
+    public function updateActivityParams(int $activityId, array $params): bool
+    {
+        $ngoId = app('current_ngo_id') ?? 0;
+
+        $activity = Activity::where('id', $activityId)
+            ->where('is_deleted', 0)
+            ->where('ngo_id', $ngoId)
+            ->first();
+
+        if (!$activity) {
+            return false;
+        }
+
+        $allowed = ['budget_used', 'beneficiaries_reached', 'media_status', 'media_link'];
+        foreach ($params as $k => $v) {
+            if (in_array($k, $allowed, true)) {
+                $activity->{$k} = $v;
+            }
+        }
+
+        $activity->updated_at = now();
+        $activity->save();
+
+        return true;
     }
 }
