@@ -15,6 +15,7 @@ class ActivityMilestone extends Model
         'start_date',
         'end_date',
         'milestone_status',
+        'completed_at',
         'created_at',
         'updated_at',
         'is_deleted',
@@ -25,6 +26,7 @@ class ActivityMilestone extends Model
         'end_date' => 'date',
         'is_deleted' => 'integer',
         'milestone_status' => 'integer',
+        'completed_at' => 'datetime',
     ];
 
     public function activity()

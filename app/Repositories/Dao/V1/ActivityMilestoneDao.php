@@ -16,6 +16,8 @@ class ActivityMilestoneDao
 
     public int $milestoneStatus = 0;
 
+    public ?string $completedAt = null;
+
     public ?string $createdAt = null;
 
     public ?string $updatedAt = null;
@@ -37,6 +39,9 @@ class ActivityMilestoneDao
         }
         if (isset($this->endDate) && $this->endDate !== '') {
             $collection['end_date'] = $this->endDate;
+        }
+        if (isset($this->completedAt) && $this->completedAt !== '') {
+            $collection['completed_at'] = $this->completedAt;
         }
         if (isset($this->milestoneStatus)) {
             $collection['milestone_status'] = $this->milestoneStatus;
@@ -126,6 +131,19 @@ class ActivityMilestoneDao
             $this->updatedAt = $d->format('Y-m-d H:i:s');
         } else {
             $this->updatedAt = (string) $d;
+        }
+
+        return $this;
+    }
+
+    public function setCompletedAt($d)
+    {
+        if ($d === null) {
+            $this->completedAt = null;
+        } elseif ($d instanceof \DateTimeInterface) {
+            $this->completedAt = $d->format('Y-m-d H:i:s');
+        } else {
+            $this->completedAt = (string) $d;
         }
 
         return $this;

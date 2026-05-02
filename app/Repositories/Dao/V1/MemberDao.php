@@ -19,9 +19,6 @@ class MemberDao
     public string $contactNumber = '';
 
     public string $officialEmail = '';
-
-    public int $roleType = 0;
-
     public int $accessLevel = 0;
 
     public int $status = 0;
@@ -60,9 +57,7 @@ class MemberDao
         if (isset($this->officialEmail)) {
             $collection['official_email'] = $this->officialEmail;
         }
-        if (isset($this->roleType)) {
-            $collection['role_type'] = $this->roleType;
-        }
+        
         if (isset($this->accessLevel)) {
             $collection['access_level'] = $this->accessLevel;
         }
@@ -234,25 +229,6 @@ class MemberDao
         return $this;
     }
 
-    /**
-     * Get the value of roleType
-     */ 
-    public function getRoleType()
-    {
-        return $this->roleType;
-    }
-
-    /**
-     * Set the value of roleType
-     *
-     * @return  self
-     */ 
-    public function setRoleType($roleType)
-    {
-        $this->roleType = $roleType;
-
-        return $this;
-    }
 
     /**
      * Get the value of accessLevel

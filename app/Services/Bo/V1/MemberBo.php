@@ -19,9 +19,6 @@ class MemberBo
     public string $username = '';
 
     public string $password = '';
-
-    public int $roleType = 0;
-
     public int $accessLevel = 0;
 
     public int $status = 0;
@@ -188,25 +185,6 @@ class MemberBo
         return $this;
     }
 
-    /**
-     * Get the value of roleType
-     */ 
-    public function getRoleType()
-    {
-        return $this->roleType;
-    }
-
-    /**
-     * Set the value of roleType
-     *
-     * @return  self
-     */ 
-    public function setRoleType($roleType)
-    {
-        $this->roleType = $roleType;
-
-        return $this;
-    }
 
     /**
      * Get the value of accessLevel

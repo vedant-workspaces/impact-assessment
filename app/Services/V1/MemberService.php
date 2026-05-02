@@ -42,7 +42,8 @@ class MemberService
             }
 
             $creatorType = (int) ($authUser->user_type ?? 0);
-            $targetType = (int) $memberBo->getRoleType();
+            // The incoming `access_level` is now the identity of the member
+            $targetType = (int) $memberBo->getAccessLevel();
 
             if ($creatorType === UserTypes::SUPER_ADMIN) {
                 // full permissions
@@ -88,8 +89,8 @@ class MemberService
         $registerUserDao->setEmail($memberBo->getOfficialEmail());
         $registerUserDao->setUserName($memberBo->getUserName());
         $registerUserDao->setPassword($memberBo->getPassword());
-        // Use the selected role_type from the member payload as the user's user_type
-        $registerUserDao->setUserType($memberBo->getRoleType());
+        // Use the selected `access_level` as the user's user_type (identity)
+        $registerUserDao->setUserType($memberBo->getAccessLevel());
 
         // Associate member user with current NGO
         $registerUserDao->setNgoId(app('current_ngo_id') ?? 0);
@@ -108,7 +109,8 @@ class MemberService
         $memberDao->setDepartment($memberBo->getDepartment());
         $memberDao->setContactNumber($memberBo->getContactNumber());
         $memberDao->setOfficialEmail($memberBo->getOfficialEmail());
-        $memberDao->setRoleType($memberBo->getRoleType());
+        // `role_type` column removed; store only access level as the member identity
+        $memberDao->setAccessLevel($memberBo->getAccessLevel());
         $memberDao->setAccessLevel($memberBo->getAccessLevel());
         $memberDao->setStatus($memberBo->getStatus());
         $memberDao->setAssignedBy(Auth::id());

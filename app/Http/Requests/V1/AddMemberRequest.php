@@ -24,9 +24,8 @@ class AddMemberRequest extends FormRequest
             'official_email' => 'required|email',
             'username' => 'required|string',
             'password' => 'required|string|min:8',
-            // role_type values: 1=Super Admin, 2=Project Manager, 3=Supervisor, 4=Field Executive
-            'role_type' => 'required|in:1,2,3,4',
-            'access_level' => 'required|int',
+            // `access_level` is the identity of the member: 1=Super Admin,2=Project Manager,3=Supervisor,4=Field Executive
+            'access_level' => 'required|in:1,2,3,4',
             'status' => 'required|int',
         ];
     }
@@ -48,7 +47,6 @@ class AddMemberRequest extends FormRequest
         'official_email',
         'username',
         'password',
-        'role_type',
         'access_level',
         'status',
     ];
@@ -64,7 +62,6 @@ class AddMemberRequest extends FormRequest
             'official_email.required' => 'Official email is required',
             'username.required' => 'Username is required',
             'password.required' => 'Password is required',
-            'role_type.required' => 'Role type is required',
             'access_level.required' => 'Access level is required',
             'status.required' => 'Status is required',
         ];

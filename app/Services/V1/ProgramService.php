@@ -15,7 +15,8 @@ class ProgramService
 {
     public function __construct(
         private ProgramRepository $programRepository,
-        private ProgramMembersRepository $programMembersRepository
+        private ProgramMembersRepository $programMembersRepository,
+        private \App\Repositories\V1\ActivityRepository $activityRepository
     ) {}
 
     public function create(ProgramBo $programBo)
@@ -83,6 +84,163 @@ class ProgramService
     public function getProgramDetailsData(int $programId): array
     {
         return $this->programRepository->getProgramDetails($programId);
+    }
+
+    public function calculateProgramImpactData(?int $programId = null): array
+    {
+        $activities = $this->activityRepository->getActivitiesForProgram($programId);
+
+        if (empty($activities)) {
+            return [];
+        }
+
+        $totalBudget = 0.0;
+        $totalBudgetUsed = 0.0;
+        $totalBeneficiaries = 0;
+        $totalBeneficiariesReached = 0;
+        $totalMilestones = 0;
+        $totalCompletedMilestones = 0;
+        $totalCompletedOnTime = 0;
+        $fieldEvidenceScores = [];
+
+        foreach ($activities as $act) {
+            $tb = floatval($act['total_budget'] ?? 0);
+            $tbu = floatval($act['budget_used'] ?? 0);
+            $totalBudget += $tb;
+            $totalBudgetUsed += $tbu;
+
+            $tbens = intval($act['total_beneficiaries'] ?? 0);
+            $treached = intval($act['beneficiaries_reached'] ?? 0);
+            $totalBeneficiaries += $tbens;
+            $totalBeneficiariesReached += $treached;
+
+            $milestones = $act['milestones'] ?? [];
+            $totalMilestones += count($milestones);
+            $completed = collect($milestones)->filter(function ($m) {
+                return intval($m['status'] ?? 0) === 2;
+            })->count();
+            $totalCompletedMilestones += $completed;
+
+            $completedOnTime = collect($milestones)->filter(function ($m) {
+                if (intval($m['status'] ?? 0) !== 2) {
+                    return false;
+                }
+                if (empty($m['completed_at']) || empty($m['end_date'])) {
+                    return false;
+                }
+                try {
+                    $completed = new \DateTime($m['completed_at']);
+                    $end = new \DateTime($m['end_date']);
+                } catch (\Exception $e) {
+                    return false;
+                }
+                return $completed <= $end;
+            })->count();
+
+            $totalCompletedOnTime += $completedOnTime;
+
+            // Field evidence score for activity (same logic as ActivityService)
+            $isMediaRequired = intval($act['is_media_uploads'] ?? 0) === 1;
+            $mediaStatus = intval($act['media_status'] ?? 2);
+            $mediaLink = $act['media_link'] ?? null;
+
+            if (!$isMediaRequired) {
+                $fes = 100.0;
+            } else {
+                if (empty($mediaLink)) {
+                    $fes = 0.0;
+                } else {
+                    if ($mediaStatus === 1) {
+                        $fes = 100.0;
+                    } elseif ($mediaStatus === 2) {
+                        $fes = 75.0;
+                    } else {
+                        $fes = 50.0;
+                    }
+                }
+            }
+
+            $fieldEvidenceScores[] = $fes;
+        }
+
+        // Budget Utilization Score for program
+        $budgetPct = $totalBudget > 0 ? ($totalBudgetUsed / $totalBudget) * 100.0 : null;
+        $budgetScore = $budgetPct === null ? 100.0 : min(100.0, $budgetPct);
+
+        // Timeline Performance Score
+        if ($totalMilestones <= 0) {
+            $timelineScore = 100.0;
+        } else {
+            $timelineScore = ($totalCompletedOnTime / $totalMilestones) * 100.0;
+        }
+
+        // Milestone Completion Score
+        if ($totalMilestones <= 0) {
+            $milestoneScore = 100.0;
+        } else {
+            $milestoneScore = ($totalCompletedMilestones / $totalMilestones) * 100.0;
+        }
+
+        // Beneficiary Score
+        if ($totalBeneficiaries <= 0) {
+            $beneficiaryScore = 100.0;
+        } else {
+            $beneficiaryScore = ($totalBeneficiariesReached / $totalBeneficiaries) * 100.0;
+        }
+
+        // Field Evidence program score: average of activity scores
+        if (empty($fieldEvidenceScores)) {
+            $fieldEvidenceScore = 100.0;
+        } else {
+            $fieldEvidenceScore = array_sum($fieldEvidenceScores) / count($fieldEvidenceScores);
+        }
+
+        $finalScoreRaw = ($budgetScore * 0.25) + ($timelineScore * 0.20) + ($milestoneScore * 0.25) + ($beneficiaryScore * 0.15) + ($fieldEvidenceScore * 0.15);
+        $finalScore = round(min(100.0, $finalScoreRaw), 2);
+
+        if ($finalScore >= 85.0) {
+            $finalStatus = 'High Impact';
+        } elseif ($finalScore >= 70.0) {
+            $finalStatus = 'Moderate Impact';
+        } elseif ($finalScore >= 50.0) {
+            $finalStatus = 'Low Impact';
+        } else {
+            $finalStatus = 'Critical / Needs Attention';
+        }
+
+        return [
+            'program_id' => $programId,
+            'budget' => [
+                'total_budget' => $totalBudget,
+                'budget_used' => $totalBudgetUsed,
+                'raw_percentage' => $budgetPct === null ? null : round($budgetPct, 2),
+                'score' => round($budgetScore, 2),
+            ],
+            'timeline' => [
+                'total_milestones' => $totalMilestones,
+                'completed_on_time' => $totalCompletedOnTime,
+                'score' => round($timelineScore, 2),
+            ],
+            'milestones' => [
+                'total' => $totalMilestones,
+                'completed' => $totalCompletedMilestones,
+                'score' => round($milestoneScore, 2),
+            ],
+            'beneficiaries' => [
+                'target' => $totalBeneficiaries,
+                'reached' => $totalBeneficiariesReached,
+                'score' => round($beneficiaryScore, 2),
+            ],
+            'field_evidence' => [
+                'score' => round($fieldEvidenceScore, 2),
+            ],
+            'final' => [
+                'raw' => round($finalScoreRaw, 2),
+                'score' => $finalScore,
+                'status' => $finalStatus,
+            ],
+            'activity_count' => count($activities),
+        ];
     }
 
     public function deleteProgramById(int $programId)

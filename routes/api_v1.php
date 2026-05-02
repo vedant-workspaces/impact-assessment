@@ -25,41 +25,36 @@ Route::prefix('v1')->group(function () {
 
     Route::post('auth/logout', [LoginController::class, 'logout']);
 
-    // Member creation: Super Admins, Project Managers, Supervisors
-    Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
+    // Member creation: authenticated users (role-checking is handled on frontend)
+    Route::middleware(['jwt'])->group(function () {
         Route::post('add-members', [MemberController::class, 'add']);
     });
 
-    // Members listing: Super Admins and Project Managers
-    Route::middleware(['jwt', 'role:1,2'])->group(function () {
+    // Members listing: authenticated users (frontend enforces role access)
+    Route::middleware(['jwt'])->group(function () {
         Route::get('members', [MemberController::class, 'get']);
     });
 
-    // Programs management (create/edit/delete): Super Admins and Project Managers
-    Route::middleware(['jwt', 'role:1,2'])->group(function () {
+    // Programs management & viewing: authenticated users (frontend enforces role access)
+    Route::middleware(['jwt'])->group(function () {
         Route::post('add-program', [ProgramController::class, 'add']);
         Route::post('delete-program', [ProgramController::class, 'deleteProgram']);
         Route::post('programs/edit', [ProgramController::class, 'edit']);
-    });
 
-    // Programs view: Super Admins, Project Managers, Supervisors
-    Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
         Route::get('programs/names', [ProgramController::class, 'getProgramNames']);
         Route::get('programs', [ProgramController::class, 'getProgramsWithMembers']);
         Route::get('programs/details', [ProgramController::class, 'getDetails']);
+        Route::post('programs/impact', [ProgramController::class, 'impactScore']);
     });
 
-    // Surveys: adding and viewing allowed for Super Admins, Project Managers, Supervisors
-    Route::middleware(['jwt', 'role:1,2,3'])->group(function () {
+    // Surveys: authenticated users (frontend enforces role access)
+    Route::middleware(['jwt'])->group(function () {
         Route::post('add-survey', [SurveyController::class, 'add']);
         Route::post('add-activity', [ActivityController::class, 'add']);
         Route::get('surveys/names', [SurveyController::class, 'getSurveyNames']);
         Route::get('surveys', [SurveyController::class, 'getSurveysWithMembers']);
         Route::get('surveys/details', [SurveyController::class, 'getDetails']);
-    });
 
-    // Surveys management (edit/delete): Super Admins and Project Managers
-    Route::middleware(['jwt', 'role:1,2'])->group(function () {
         Route::post('surveys/edit', [SurveyController::class, 'edit']);
         Route::post('delete-survey', [SurveyController::class, 'deleteSurvey']);
     });
@@ -68,11 +63,10 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['jwt'])->group(function () {
         Route::get('activities/names', [ActivityController::class, 'getActivityNames']);
         Route::get('activities', [ActivityController::class, 'getActivitiesWithMembers']);
-        // Update activity params and milestone status (Project Managers / Super Admins)
-        Route::middleware(['role:1,2,3'])->group(function () {
-            Route::post('activities/update', [ActivityController::class, 'updateParams']);
-            Route::post('activities/milestone/complete', [ActivityController::class, 'markMilestoneComplete']);
-        });
+        Route::post('activities/impact', [ActivityController::class, 'impactScore']);
+        // Update activity params and milestone status (frontend enforces role access)
+        Route::post('activities/update', [ActivityController::class, 'updateParams']);
+        Route::post('activities/milestone/complete', [ActivityController::class, 'markMilestoneComplete']);
         Route::get('activities/details', [ActivityController::class, 'getDetails']);
     });
 

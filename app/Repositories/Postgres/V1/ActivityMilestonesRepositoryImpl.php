@@ -34,6 +34,13 @@ class ActivityMilestonesRepositoryImpl implements ActivityMilestonesRepository
         }
 
         $ms->milestone_status = intval($status);
+        // set completed_at when milestone is marked completed (2), otherwise clear it
+        if (intval($status) === 2) {
+            $ms->completed_at = Carbon::now();
+        } else {
+            $ms->completed_at = null;
+        }
+
         $ms->updated_at = Carbon::now()->format('Y-m-d H:i:s');
         $ms->save();
 

@@ -30,7 +30,6 @@ class MemberController extends Controller
         $memberBo->setOfficialEmail($data['official_email']);
         $memberBo->setUserName($data['username']);
         $memberBo->setPassword(md5($data['password']));
-        $memberBo->setRoleType($data['role_type']);
         $memberBo->setAccessLevel($data['access_level']);
         $memberBo->setStatus($data['status']);
 

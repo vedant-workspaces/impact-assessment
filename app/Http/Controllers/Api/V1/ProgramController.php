@@ -8,6 +8,7 @@ use App\Http\Requests\V1\EditProgramRequest;
 use App\Services\Bo\V1\ProgramBo;
 use App\Services\V1\ProgramService;
 use App\Traits\V1\ApiResponseTrait;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -110,6 +111,36 @@ class ProgramController extends Controller
             return $this->programService->deleteProgramById((int) $programId);
         } catch (\Exception) {
             return $this->error('Failed to delete program');
+        }
+    }
+
+    public function impactScore(\App\Http\Requests\V1\ProgramImpactRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            $programId = array_key_exists('program_id', $data) ? $data['program_id'] : null;
+
+            // if programId provided and >0, ensure program exists
+            if (!is_null($programId) && intval($programId) > 0) {
+                $exists = \App\Models\Program::where('id', intval($programId))
+                    ->where('is_deleted', 0)
+                    ->where('ngo_id', app('current_ngo_id') ?? 0)
+                    ->exists();
+
+                if (!$exists) {
+                    return $this->error('Program not found', 404);
+                }
+            }
+
+            $result = $this->programService->calculateProgramImpactData($programId);
+
+            if (empty($result)) {
+                return $this->error('No activities found for given program', 404);
+            }
+
+            return $this->success($result, 'Program impact score calculated');
+        } catch (Exception) {
+            return $this->error('Failed to calculate program impact');
         }
     }
 }

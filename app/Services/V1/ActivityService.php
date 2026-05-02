@@ -84,6 +84,146 @@ class ActivityService
         return $this->activityRepository->getActivityDetails($activityId);
     }
 
+    public function calculateActivityImpactData(int $activityId): array
+    {
+        $activity = $this->getActivityDetailsData($activityId);
+
+        if (empty($activity)) {
+            return [];
+        }
+
+        // Budget Utilization Score
+        $totalBudget = floatval($activity['total_budget'] ?? 0);
+        $budgetUsed = floatval($activity['budget_used'] ?? 0);
+        $budgetPct = $totalBudget > 0 ? ($budgetUsed / $totalBudget) * 100.0 : null;
+        $budgetScore = $budgetPct === null ? 100.0 : min(100.0, $budgetPct);
+        $budgetOverspend = ($budgetPct !== null && $budgetPct > 100.0);
+
+        // Milestones
+        $milestones = $activity['milestones'] ?? [];
+        $totalMilestones = intval($activity['milestone_count'] ?? count($milestones));
+        $completedMilestones = collect($milestones)->filter(function ($m) {
+            return intval($m['status'] ?? 0) === 2;
+        })->count();
+
+        // Completed on time: requires completed_at and end_date comparison
+        $completedOnTime = collect($milestones)->filter(function ($m) {
+            if (intval($m['status'] ?? 0) !== 2) {
+                return false;
+            }
+            if (empty($m['completed_at']) || empty($m['end_date'])) {
+                return false;
+            }
+            try {
+                $completed = new \DateTime($m['completed_at']);
+                $end = new \DateTime($m['end_date']);
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            return $completed <= $end;
+        })->count();
+
+        // Timeline Performance Score
+        if ($totalMilestones <= 0) {
+            $timelineScore = 100.0;
+        } else {
+            $timelineScore = ($completedOnTime / $totalMilestones) * 100.0;
+        }
+
+        // Milestone Completion Score
+        if ($totalMilestones <= 0) {
+            $milestoneScore = 100.0;
+        } else {
+            $milestoneScore = ($completedMilestones / $totalMilestones) * 100.0;
+        }
+
+        // Beneficiary Reach Score
+        $totalBeneficiaries = intval($activity['total_beneficiaries'] ?? 0);
+        $beneficiariesReached = intval($activity['beneficiaries_reached'] ?? 0);
+        if ($totalBeneficiaries <= 0) {
+            $beneficiaryScore = 100.0;
+        } else {
+            $beneficiaryScore = ($beneficiariesReached / $totalBeneficiaries) * 100.0;
+        }
+
+        // Field Evidence / Media Score
+        // Logic: If activity does not require media uploads, score is 100.
+        // Otherwise map based on media_status and presence of media_link:
+        // approved+link => 100, pending+link => 75, not approved+link => 50, no link => 0
+        $isMediaRequired = intval($activity['is_media_uploads'] ?? 0) === 1;
+        $mediaStatus = intval($activity['media_status'] ?? 2);
+        $mediaLink = $activity['media_link'] ?? null;
+
+        if (!$isMediaRequired) {
+            $fieldEvidenceScore = 100.0;
+        } else {
+            if (empty($mediaLink)) {
+                $fieldEvidenceScore = 0.0;
+            } else {
+                if ($mediaStatus === 1) {
+                    $fieldEvidenceScore = 100.0;
+                } elseif ($mediaStatus === 2) {
+                    $fieldEvidenceScore = 75.0;
+                } else {
+                    $fieldEvidenceScore = 50.0;
+                }
+            }
+        }
+
+        // Final Impact Score (weights as provided)
+        $finalScoreRaw = ($budgetScore * 0.25) + ($timelineScore * 0.20) + ($milestoneScore * 0.25) + ($beneficiaryScore * 0.15) + ($fieldEvidenceScore * 0.15);
+        $finalScore = round(min(100.0, $finalScoreRaw), 2);
+
+        // Final status band
+        if ($finalScore >= 85.0) {
+            $finalStatus = 'High Impact';
+        } elseif ($finalScore >= 70.0) {
+            $finalStatus = 'Moderate Impact';
+        } elseif ($finalScore >= 50.0) {
+            $finalStatus = 'Low Impact';
+        } else {
+            $finalStatus = 'Critical / Needs Attention';
+        }
+
+        return [
+            'activity_id' => $activityId,
+            'budget' => [
+                'total_budget' => $totalBudget,
+                'budget_used' => $budgetUsed,
+                'raw_percentage' => $budgetPct === null ? null : round($budgetPct, 2),
+                'score' => round($budgetScore, 2),
+                'overspend' => $budgetOverspend,
+            ],
+            'timeline' => [
+                'total_milestones' => $totalMilestones,
+                'completed_on_time' => $completedOnTime,
+                'score' => round($timelineScore, 2),
+            ],
+            'milestones' => [
+                'total' => $totalMilestones,
+                'completed' => $completedMilestones,
+                'score' => round($milestoneScore, 2),
+            ],
+            'beneficiaries' => [
+                'target' => $totalBeneficiaries,
+                'reached' => $beneficiariesReached,
+                'score' => round($beneficiaryScore, 2),
+            ],
+            'field_evidence' => [
+                'is_required' => $isMediaRequired,
+                'media_status' => $mediaStatus,
+                'media_link' => $mediaLink,
+                'score' => round($fieldEvidenceScore, 2),
+            ],
+            'final' => [
+                'raw' => round($finalScoreRaw, 2),
+                'score' => $finalScore,
+                'status' => $finalStatus,
+            ],
+        ];
+    }
+
     private function setActivityDao(ActivityBo $activityBo): ActivityDao
     {
         $activityDao = new ActivityDao();
